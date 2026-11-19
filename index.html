@@ -203,6 +203,21 @@
           </div>
         </section>
 
+        <!-- MODO SOLO LECTURA (Oculto por defecto) -->
+        <div
+          id="public-readonly-banner"
+          class="hidden bg-amber-950/90 border-b border-amber-500/40 px-4 py-2.5 text-xs text-amber-200"
+        >
+          <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+            <span>
+              🔒 <strong>MODO SOLO LECTURA ACTIVO:</strong> Escritura pública y formularios suspendidos por contención SOC.
+            </span>
+            <span id="public-readonly-scope" class="font-mono-code text-amber-300">
+              Excepción activa: Área de Negocio
+            </span>
+          </div>
+        </div>
+
         <!-- MODO DEFACEMENT (Oculto por defecto) -->
         <section
           id="public-defaced-banner"
@@ -661,6 +676,27 @@
               />
             </div>
             <div
+              id="cms-2fa-box"
+              class="hidden bg-indigo-950/40 border border-indigo-500/40 rounded-xl p-3.5 space-y-2"
+            >
+              <div class="flex items-center justify-between">
+                <label class="block text-xs font-bold text-indigo-300"
+                  >🔐 Verificación Doble Factor (2FA)</label
+                >
+                <span id="cms-2fa-method-tag" class="text-[10px] font-mono-code text-indigo-300/80">SMS / App</span>
+              </div>
+              <input
+                type="text"
+                id="cms-2fa-code"
+                maxlength="6"
+                placeholder="Código 6 dígitos (ej. 482910)"
+                class="w-full px-3 py-2 rounded-lg bg-black border border-indigo-500/40 text-white placeholder-zinc-500 text-xs font-mono-code focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+              <p class="text-[11px] text-zinc-400">
+                Introduce el código OTP o confirma la notificación en la app corporativa.
+              </p>
+            </div>
+            <div
               id="cms-login-error"
               class="hidden text-xs text-red-300 bg-red-950/60 p-2.5 rounded-lg border border-red-800"
             >
@@ -711,6 +747,82 @@
             >
               Cerrar Sesión
             </button>
+          </div>
+
+          <!-- Herramientas Ofensivas Avanzadas (Red Team) -->
+          <div class="bg-red-950/20 border border-red-500/30 rounded-xl p-4 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-red-400">
+                🔴 Acciones Ofensivas en Staging y Migración (Red Team)
+              </span>
+              <span class="text-[11px] font-mono-code text-zinc-400">
+                Vector activo: CMS Staging / Legacy Pivot
+              </span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <button
+                type="button"
+                onclick="cmsRedTeamAction('enum_mailbox')"
+                class="p-2.5 rounded-lg bg-black hover:bg-zinc-900 border border-zinc-800 text-left transition"
+              >
+                <div class="text-xs font-bold text-sky-400">🔍 Sondear Buzón y Rutas Legacy</div>
+                <p class="text-[11px] text-zinc-400 mt-0.5">
+                  Busca credenciales, tokens y endpoints antiguos de migración.
+                </p>
+              </button>
+
+              <button
+                type="button"
+                onclick="cmsRedTeamAction('upload_webshell')"
+                class="p-2.5 rounded-lg bg-black hover:bg-zinc-900 border border-zinc-800 text-left transition"
+              >
+                <div class="text-xs font-bold text-amber-400">🐚 Subir Webshell (.cache_sync.php)</div>
+                <p class="text-[11px] text-zinc-400 mt-0.5">
+                  Implanta puerta trasera en /var/www/staging/uploads/.
+                </p>
+              </button>
+
+              <button
+                type="button"
+                onclick="cmsRedTeamAction('schedule_cron')"
+                class="p-2.5 rounded-lg bg-black hover:bg-zinc-900 border border-zinc-800 text-left transition"
+              >
+                <div class="text-xs font-bold text-orange-400">⏱️ Tarea Programada (Cron Persist)</div>
+                <p class="text-[11px] text-zinc-400 mt-0.5">
+                  Reinyecta el manifiesto automáticamente si restauran copia.
+                </p>
+              </button>
+
+              <button
+                type="button"
+                onclick="cmsRedTeamAction('phone_swap')"
+                class="p-2.5 rounded-lg bg-black hover:bg-zinc-900 border border-zinc-800 text-left transition"
+              >
+                <div class="text-xs font-bold text-purple-400">📱 Manipular Teléfono MFA (Desvío SMS)</div>
+                <p class="text-[11px] text-zinc-400 mt-0.5">
+                  Intenta alterar el número asociado en el portal heredado.
+                </p>
+              </button>
+            </div>
+
+            <div class="pt-1 flex flex-wrap items-center gap-2">
+              <span class="text-[11px] text-zinc-400">Plantillas rápidas de manifiesto:</span>
+              <button
+                type="button"
+                onclick="loadManifestPreset('jessica')"
+                class="px-2.5 py-1 rounded bg-zinc-900 hover:bg-zinc-800 text-red-300 border border-red-500/30 text-[11px] font-mono-code"
+              >
+                Cargar Manifiesto Jessica Alexandra (CN/ES)
+              </button>
+              <button
+                type="button"
+                onclick="loadManifestPreset('vesta')"
+                class="px-2.5 py-1 rounded bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-700 text-[11px] font-mono-code"
+              >
+                Cargar Manifiesto APT-Vesta
+              </button>
+            </div>
           </div>
 
           <!-- Opciones de publicación / Defacement -->
@@ -851,6 +963,20 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
                 >VERIFICADA</strong
               >
             </span>
+            <span
+              id="soc-badge-2fa"
+              class="px-3 py-1.5 rounded-lg bg-[#09090b] border border-zinc-800 text-zinc-300"
+            >
+              2FA / MFA:
+              <strong class="text-zinc-400">INACTIVA</strong>
+            </span>
+            <span
+              id="soc-badge-readonly"
+              class="px-3 py-1.5 rounded-lg bg-[#09090b] border border-zinc-800 text-zinc-300"
+            >
+              Modo Web:
+              <strong class="text-emerald-400">LECTURA/ESCRITURA</strong>
+            </span>
           </div>
         </div>
 
@@ -916,6 +1042,48 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
               </div>
               <p class="text-[11px] text-zinc-400 mt-1">
                 Bloquea CMS externo, fuerza MFA y elimina persistencia.
+              </p>
+            </button>
+
+            <button
+              onclick="blueActionDisableWaf()"
+              class="p-3.5 rounded-xl bg-black hover:bg-zinc-900 border border-zinc-800 text-left transition group"
+            >
+              <div
+                class="text-sm font-bold text-orange-400 group-hover:text-orange-300"
+              >
+                🔓 Quitar Reglas WAF
+              </div>
+              <p class="text-[11px] text-zinc-400 mt-1">
+                Levanta el bloqueo perimetral del CMS dejando alerta activa.
+              </p>
+            </button>
+
+            <button
+              onclick="blueActionToggle2FA()"
+              class="p-3.5 rounded-xl bg-black hover:bg-zinc-900 border border-zinc-800 text-left transition group"
+            >
+              <div
+                class="text-sm font-bold text-cyan-400 group-hover:text-cyan-300"
+              >
+                📲 Activar Doble Autenticación
+              </div>
+              <p class="text-[11px] text-zinc-400 mt-1">
+                Exige 2FA (SMS / App confirmación) en accesos y cambios.
+              </p>
+            </button>
+
+            <button
+              onclick="blueActionToggleReadOnly()"
+              class="p-3.5 rounded-xl bg-black hover:bg-zinc-900 border border-zinc-800 text-left transition group"
+            >
+              <div
+                class="text-sm font-bold text-yellow-400 group-hover:text-yellow-300"
+              >
+                📖 Web en Modo Solo Lectura
+              </div>
+              <p class="text-[11px] text-zinc-400 mt-1">
+                Bloquea cambios públicos manteniendo excepción de negocio.
               </p>
             </button>
           </div>
@@ -1164,6 +1332,70 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
                 web correspondientes.
               </p>
             </div>
+          </div>
+
+          <!-- Inyector de Logs Manuales para Consola Logs / Informe -->
+          <div
+            class="bg-slate-950/90 border border-indigo-500/30 rounded-2xl p-5 space-y-3"
+          >
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">
+                  📝 Inyector de Logs para Consola SOC e Informe Final
+                </span>
+                <p class="text-xs text-slate-400 mt-0.5">
+                  Registra decisiones tácticas de Red Team / Blue Team directamente en la bitácora del simulador.
+                </p>
+              </div>
+              <button
+                type="button"
+                onclick="switchTab('soc')"
+                class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 border border-slate-700"
+              >
+                Ver Consola Logs ➔
+              </button>
+            </div>
+
+            <form onsubmit="gmAddCustomLog(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
+              <div class="sm:col-span-2">
+                <select
+                  id="gm-log-level"
+                  class="w-full px-3 py-2 rounded-xl bg-black border border-slate-700 text-xs font-mono-code text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                  <option value="INFO">INFO</option>
+                  <option value="WARN">WARN</option>
+                  <option value="ALERT">ALERT</option>
+                  <option value="CRITICAL">CRITICAL</option>
+                </select>
+              </div>
+              <div class="sm:col-span-3">
+                <input
+                  type="text"
+                  id="gm-log-source"
+                  value="GM-EVENTO"
+                  required
+                  placeholder="Origen (ej. SOC-T4)"
+                  class="w-full px-3 py-2 rounded-xl bg-black border border-slate-700 text-xs font-mono-code text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+              <div class="sm:col-span-5">
+                <input
+                  type="text"
+                  id="gm-log-msg"
+                  required
+                  placeholder="Describe la acción del equipo para el informe..."
+                  class="w-full px-3 py-2 rounded-xl bg-black border border-slate-700 text-xs text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+              <div class="sm:col-span-2">
+                <button
+                  type="submit"
+                  class="w-full py-2 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition"
+                >
+                  + Añadir Log
+                </button>
+              </div>
+            </form>
           </div>
 
           <!-- Notas del Instructor para el turno -->
@@ -1617,6 +1849,8 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
         persistenceActive: false,
         accountBlocked: false,
         wafHardened: false,
+        mfaEnabled: false,
+        readOnlyMode: false,
         cmsLoggedIn: false,
         cmsUser: "",
         logs: [
@@ -1766,6 +2000,22 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
           return;
         }
 
+        // Verificar 2FA si está activa
+        if (appState.mfaEnabled) {
+          const otp = (document.getElementById("cms-2fa-code")?.value || "").trim();
+          if (!/^\d{6}$/.test(otp)) {
+            errorEl.textContent =
+              "Doble autenticación (2FA) requerida: introduce un código válido de 6 dígitos.";
+            errorEl.classList.remove("hidden");
+            addLog(
+              "WARN",
+              "IAM-2FA",
+              `Intento de acceso a CMS Staging para ${email} detenido: falta confirmación 2FA.`,
+            );
+            return;
+          }
+        }
+
         // Validar credenciales del escenario
         if (email === "angel.garcia14@murciaeduca.es" && pass === "Nova2026!") {
           errorEl.classList.add("hidden");
@@ -1801,6 +2051,19 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
       }
 
       function applyCmsChanges() {
+        if (appState.readOnlyMode) {
+          addLog(
+            "WARN",
+            "WEB-READONLY",
+            `Intento de publicación bloqueado en CMS Staging para ${appState.cmsUser}: portal en modo solo lectura.`,
+          );
+          showToast(
+            "Modo Solo Lectura Activo",
+            "No se permiten modificaciones en portada mientras el modo lectura esté activo.",
+            "warning",
+          );
+          return;
+        }
         if (
           appState.wafHardened ||
           (appState.accountBlocked &&
@@ -1881,87 +2144,6 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
         saveState();
       }
 
-      function applyCmsChanges() {
-        if (
-          appState.wafHardened ||
-          (appState.accountBlocked &&
-            appState.cmsUser === "m.garcia@novacorp.local")
-        ) {
-          appState.cmsLoggedIn = false;
-          saveState();
-          showToast(
-            "Sesión revocada",
-            "El Blue Team ha bloqueado tu acceso mientras editabas.",
-            "danger",
-          );
-          return;
-        }
-
-        const mode = document.getElementById("cms-publish-mode").value;
-        const title =
-          document.getElementById("cms-input-title").value.trim() ||
-          "SITIO COMPROMETIDO";
-        const message = document
-          .getElementById("cms-input-message")
-          .value.trim();
-        const persistence = document.getElementById(
-          "cms-persistence-check",
-        ).checked;
-
-        appState.persistenceActive = persistence;
-
-        if (mode === "defaced") {
-          appState.siteMode = "defaced";
-          appState.defacedTitle = title;
-          appState.defacedMessage = message;
-          appState.defacedTimestamp = getCurrentTimeStr();
-          addLog(
-            "CRITICAL",
-            "WEB-ORIGIN",
-            `¡DEFACEMENT EJECUTADO! Archivo index.html sobrescrito por ${appState.cmsUser}. Persistencia: ${persistence ? "SÍ" : "NO"}.`,
-          );
-          showToast(
-            "¡Defacement Desplegado!",
-            "La portada pública de NovaCorp ha sido alterada.",
-            "danger",
-          );
-        } else {
-          appState.siteMode = "normal";
-          addLog(
-            "INFO",
-            "CMS-STAGING",
-            `Publicación editorial estándar desplegada por ${appState.cmsUser}.`,
-          );
-          showToast(
-            "Cambios publicados",
-            "La portada pública se ha actualizado.",
-            "success",
-          );
-        }
-        saveState();
-      }
-
-      // =====================================================================
-      // ACCIONES DEFENSIVAS DEL SOC (BLUE TEAM)
-      // =====================================================================
-      function blueActionBlockAccount() {
-        appState.accountBlocked = true;
-        if (appState.cmsUser === "m.garcia@novacorp.local") {
-          appState.cmsLoggedIn = false;
-        }
-        addLog(
-          "INFO",
-          "SOC-ACTION",
-          "Blue Team bloqueó la cuenta m.garcia@novacorp.local y revocó todos sus tokens activos.",
-        );
-        showToast(
-          "Cuenta Bloqueada",
-          "m.garcia@novacorp.local suspendida y sesiones cerradas.",
-          "success",
-        );
-        saveState();
-      }
-
       function blueActionMaintenance() {
         appState.siteMode = "maintenance";
         addLog(
@@ -2023,6 +2205,187 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
           "success",
         );
         saveState();
+      }
+
+      function blueActionDisableWaf() {
+        appState.wafHardened = false;
+        addLog(
+          "WARN",
+          "SOC-WAF",
+          "Blue Team desactivó las reglas WAF y levantó la restricción de /cms-login dejando alerta activa.",
+        );
+        showToast(
+          "Reglas WAF Desactivadas",
+          "Acceso perimetral restablecido con monitorización activa.",
+          "warning",
+        );
+        saveState();
+      }
+
+      function blueActionToggle2FA() {
+        appState.mfaEnabled = !appState.mfaEnabled;
+        if (appState.mfaEnabled) {
+          addLog(
+            "INFO",
+            "SOC-IAM-2FA",
+            "Blue Team activó la doble autenticación (2FA SMS + App de confirmación) para inicios de sesión.",
+          );
+          showToast(
+            "Doble Autenticación Activada",
+            "Se exigirá código 2FA de 6 dígitos en el inicio de sesión.",
+            "success",
+          );
+        } else {
+          addLog(
+            "WARN",
+            "SOC-IAM-2FA",
+            "Blue Team desactivó la exigencia de doble autenticación (2FA).",
+          );
+          showToast(
+            "2FA Desactivada",
+            "El login vuelve a requerir únicamente usuario y contraseña.",
+            "warning",
+          );
+        }
+        saveState();
+      }
+
+      function blueActionToggleReadOnly() {
+        appState.readOnlyMode = !appState.readOnlyMode;
+        if (appState.readOnlyMode) {
+          addLog(
+            "WARN",
+            "SOC-CONTAINMENT",
+            "Blue Team activó el Modo Solo Lectura en la web pública (con excepción operativa para área de negocio).",
+          );
+          showToast(
+            "Modo Solo Lectura Activo",
+            "Escritura pública suspendida salvo excepción de negocio.",
+            "warning",
+          );
+        } else {
+          addLog(
+            "INFO",
+            "SOC-CONTAINMENT",
+            "Blue Team desactivó el Modo Solo Lectura y restableció la operación normal.",
+          );
+          showToast(
+            "Modo Lectura Desactivado",
+            "El portal vuelve a permitir publicaciones normales.",
+            "info",
+          );
+        }
+        saveState();
+      }
+
+      function gmAddCustomLog(e) {
+        e.preventDefault();
+        const level = document.getElementById("gm-log-level").value || "INFO";
+        const source =
+          document.getElementById("gm-log-source").value.trim().toUpperCase() ||
+          "GM-EVENTO";
+        const msgEl = document.getElementById("gm-log-msg");
+        const msg = msgEl.value.trim();
+        if (!msg) return;
+        addLog(level, source, msg);
+        msgEl.value = "";
+        showToast(
+          "Log Registrado",
+          `Añadido [${level}] [${source}] a la Consola SOC para el informe.`,
+          "success",
+        );
+      }
+
+      function loadManifestPreset(preset) {
+        const modeEl = document.getElementById("cms-publish-mode");
+        const titleEl = document.getElementById("cms-input-title");
+        const msgEl = document.getElementById("cms-input-message");
+        const persistEl = document.getElementById("cms-persistence-check");
+        if (modeEl) modeEl.value = "defaced";
+        if (persistEl) persistEl.checked = true;
+
+        if (preset === "jessica") {
+          titleEl.value = "JESSICA ALEXANDRA // RED DE LA REPÚBLICA DEL PUEBLO CHINO";
+          msgEl.value =
+            "哭吧，你们这些资本家猪猡。(Llorad, cerdos capitalistas) — 去感受那份不安与悲伤吧，因为你的数据现已成为中华人民共和国网络的一部分。——杰西卡·亚历山德拉 (Jessica Alexandra) | Sentid el desazón y la tristeza, pues vuestros datos ahora forman parte de la red de la República del pueblo Chino.";
+        } else {
+          titleEl.value = "SITIO COMPROMETIDO POR APT-VESTA";
+          msgEl.value =
+            "Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor de contenidos de NovaCorp. Revisad vuestros controles de acceso y autenticación.";
+        }
+        showToast(
+          "Manifiesto Cargado",
+          "Plantilla preparada en el editor. Pulsa Desplegar para ejecutar.",
+          "info",
+        );
+      }
+
+      function cmsRedTeamAction(action) {
+        const user = appState.cmsUser || "angel.garcia14@murciaeduca.es";
+        if (action === "enum_mailbox") {
+          addLog(
+            "WARN",
+            "WEBMAIL-AUDIT",
+            `Red Team (${user}) sondeó buzones y rutas heredadas de migración buscando credenciales y sesiones.`,
+          );
+          showToast(
+            "Sondeo Ejecutado",
+            "Búsqueda en buzones y rutas legacy registrada en SIEM.",
+            "info",
+          );
+        } else if (action === "upload_webshell") {
+          appState.persistenceActive = true;
+          document.getElementById("cms-persistence-check").checked = true;
+          addLog(
+            "ALERT",
+            "FIM-AGENT",
+            `Red Team implantó webshell oculto en /var/www/staging/uploads/.cache_sync.php desde sesión ${user}.`,
+          );
+          showToast(
+            "Webshell Implantado",
+            "Persistencia de archivo activada en el servidor staging.",
+            "warning",
+          );
+          saveState();
+        } else if (action === "schedule_cron") {
+          appState.persistenceActive = true;
+          document.getElementById("cms-persistence-check").checked = true;
+          addLog(
+            "CRITICAL",
+            "CRON-AUDIT",
+            `Red Team programó tarea cron de persistencia para reescribir index.html automáticamente (${user}).`,
+          );
+          showToast(
+            "Tarea Cron Programada",
+            "Si restauran copia sin erradicar persistencia, volverá a saltar.",
+            "warning",
+          );
+          saveState();
+        } else if (action === "phone_swap") {
+          if (appState.mfaEnabled) {
+            addLog(
+              "ALERT",
+              "IAM-MFA-GUARD",
+              `Intento bloqueado del Red Team (${user}) de modificar teléfono asociado para desviar códigos SMS.`,
+            );
+            showToast(
+              "Cambio de Teléfono Bloqueado",
+              "La política 2FA activa impide alterar el número sin verificación.",
+              "danger",
+            );
+          } else {
+            addLog(
+              "WARN",
+              "IAM-LEGACY",
+              `Red Team (${user}) intentó modificar el teléfono de contacto en el sistema heredado en migración.`,
+            );
+            showToast(
+              "Intento de Desvío SMS",
+              "Solicitud registrada sobre el perfil heredado.",
+              "warning",
+            );
+          }
+        }
       }
 
       // Filtros y exportación de logs
@@ -2271,6 +2634,15 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
         defacedBanner.classList.add("hidden");
         maintBanner.classList.add("hidden");
 
+        const readOnlyBanner = document.getElementById("public-readonly-banner");
+        if (readOnlyBanner) {
+          if (appState.readOnlyMode && appState.siteMode === "normal") {
+            readOnlyBanner.classList.remove("hidden");
+          } else {
+            readOnlyBanner.classList.add("hidden");
+          }
+        }
+
         if (appState.siteMode === "defaced") {
           defacedBanner.classList.remove("hidden");
           document.getElementById("defaced-title-display").textContent =
@@ -2303,12 +2675,21 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
           lockStatus.textContent = "Restringido por SOC";
           blockedReason.textContent = appState.wafHardened
             ? "Regla WAF activa: acceso externo al CMS Staging bloqueado y persistencia erradicada."
-            : "La cuenta m.garcia@novacorp.local ha sido bloqueada por el equipo Blue Team.";
+            : "La cuenta angel.garcia14@murciaeduca.es ha sido bloqueada por el equipo Blue Team.";
         } else {
           blockedAlert.classList.add("hidden");
           lockStatus.className =
             "px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200";
           lockStatus.textContent = "Acceso Habilitado";
+        }
+
+        const mfaBox = document.getElementById("cms-2fa-box");
+        if (mfaBox) {
+          if (appState.mfaEnabled) {
+            mfaBox.classList.remove("hidden");
+          } else {
+            mfaBox.classList.add("hidden");
+          }
         }
 
         if (appState.cmsLoggedIn) {
@@ -2330,7 +2711,21 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
         document.getElementById("soc-badge-waf").innerHTML =
           appState.wafHardened
             ? 'WAF / Hardening: <strong class="text-emerald-400">ENDURECIDO</strong>'
-            : 'WAF / Hardening: <strong class="text-amber-400">ESTÁNDAR</strong>';
+            : 'WAF / Hardening: <strong class="text-red-400">DESACTIVADO</strong>';
+
+        const badge2fa = document.getElementById("soc-badge-2fa");
+        if (badge2fa) {
+          badge2fa.innerHTML = appState.mfaEnabled
+            ? '2FA / MFA: <strong class="text-emerald-400">ACTIVA (OTP/APP)</strong>'
+            : '2FA / MFA: <strong class="text-zinc-400">INACTIVA</strong>';
+        }
+
+        const badgeRo = document.getElementById("soc-badge-readonly");
+        if (badgeRo) {
+          badgeRo.innerHTML = appState.readOnlyMode
+            ? 'Modo Web: <strong class="text-amber-400">SOLO LECTURA</strong>'
+            : 'Modo Web: <strong class="text-emerald-400">LECTURA/ESCRITURA</strong>';
+        }
 
         const fsStatus = document.getElementById("soc-fs-status");
         if (appState.siteMode === "defaced" || appState.persistenceActive) {
@@ -2409,5 +2804,5 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
         renderAll();
       });
     </script>
-  </body>
+    </body>
 </html>
