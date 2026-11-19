@@ -1,0 +1,2279 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NovaCorp | Portal Corporativo & Simulador Wargame</title>
+    <!-- Carga de Tailwind CSS para diseño moderno y responsive -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fuente Inter y JetBrains Mono para la consola SOC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .font-mono-code {
+        font-family: "JetBrains Mono", monospace;
+      }
+      /* Animación sutil para alertas críticas o estado defaced */
+      @keyframes pulse-border {
+        0%,
+        100% {
+          border-color: rgba(239, 68, 68, 0.8);
+        }
+        50% {
+          border-color: rgba(239, 68, 68, 0.2);
+        }
+      }
+      .defaced-glow {
+        animation: pulse-border 2s infinite;
+      }
+      /* Scrollbar personalizada para el SIEM */
+      .siem-scroll::-webkit-scrollbar {
+        width: 8px;
+      }
+      .siem-scroll::-webkit-scrollbar-track {
+        background: #0f172a;
+      }
+      .siem-scroll::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+    <!-- BARRA SUPERIOR DE CONTROL DEL SIMULADOR (SWITCHER DE VISTAS) -->
+    <div
+      class="bg-slate-900 text-slate-200 border-b border-slate-700 sticky top-0 z-50 shadow-md"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap items-center justify-between gap-3"
+      >
+        <div class="flex items-center space-x-3">
+          <span
+            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
+          >
+            SIMULADOR WARGAME
+          </span>
+          <span
+            id="nav-turn-badge"
+            class="text-xs font-mono-code text-slate-400"
+          >
+            Turno 0: Preparación
+          </span>
+          <span
+            id="nav-status-pill"
+            class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+          >
+            ● WEB ONLINE
+          </span>
+        </div>
+
+        <!-- Pestañas de navegación entre entornos -->
+        <nav
+          class="flex flex-wrap items-center gap-1.5"
+          aria-label="Vistas del simulador"
+        >
+          <button
+            onclick="switchTab('public')"
+            id="tab-btn-public"
+            class="tab-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition bg-indigo-600 text-white shadow-sm"
+          >
+            🌐 Portal Público
+          </button>
+          <button
+            onclick="switchTab('cms')"
+            id="tab-btn-cms"
+            class="tab-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-slate-300 hover:bg-slate-800"
+          >
+            🔐 CMS Staging
+          </button>
+          <button
+            onclick="switchTab('soc')"
+            id="tab-btn-soc"
+            class="tab-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-slate-300 hover:bg-slate-800 flex items-center gap-1.5"
+          >
+            🛡️ Consola SOC
+            <span
+              id="soc-alert-counter"
+              class="hidden bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full"
+              >0</span
+            >
+          </button>
+          <button
+            onclick="openGmAuth()"
+            id="tab-btn-gm"
+            class="tab-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-amber-300 hover:bg-slate-800 border border-amber-500/30"
+          >
+            🎛️ Game Master
+          </button>
+        </nav>
+      </div>
+    </div>
+
+    <!-- CONTENEDOR DE NOTIFICACIONES FLOTANTES (TOASTS) -->
+    <div
+      id="toast-container"
+      class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm"
+    ></div>
+
+    <!-- ===================================================================== -->
+    <!-- VISTA 1: PORTAL PÚBLICO DE NOVACORP                                   -->
+    <!-- ===================================================================== -->
+    <main id="view-public" class="view-section flex-grow">
+      <!-- Banner dinámico según estado: Normal, Defaced o Mantenimiento -->
+      <div id="public-site-wrapper">
+        <!-- Header Corporativo NovaCorp -->
+        <header class="bg-white border-b border-slate-200">
+          <div
+            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"
+          >
+            <div class="flex items-center gap-2.5">
+              <div
+                class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center text-white font-extrabold text-xl shadow-sm"
+              >
+                N
+              </div>
+              <div>
+                <span class="font-bold text-xl tracking-tight text-slate-900"
+                  >Nova<span class="text-blue-600">Corp</span></span
+                >
+                <span
+                  class="hidden sm:inline-block text-xs text-slate-400 ml-2 border-l border-slate-200 pl-2"
+                  >Soluciones Logísticas & Cloud</span
+                >
+              </div>
+            </div>
+            <div
+              class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-600"
+            >
+              <a href="#noticias" class="hover:text-blue-600 transition"
+                >Sala de Prensa</a
+              >
+              <a href="#directorio" class="hover:text-blue-600 transition"
+                >Equipo Directivo</a
+              >
+              <a href="#estado-servicio" class="hover:text-blue-600 transition"
+                >Infraestructura</a
+              >
+              <button
+                onclick="switchTab('cms')"
+                class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-md transition"
+              >
+                Acceso Empleados
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <!-- MODO MANTENIMIENTO (Oculto por defecto) -->
+        <section
+          id="public-maintenance-banner"
+          class="hidden py-24 px-4 bg-amber-50 border-b border-amber-200"
+        >
+          <div
+            class="max-w-2xl mx-auto text-center bg-white p-8 sm:p-12 rounded-2xl shadow-lg border border-amber-300"
+          >
+            <div
+              class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-5 text-3xl"
+            >
+              🛠️
+            </div>
+            <span
+              class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 mb-3"
+            >
+              AVISO DE SERVICIO • HTTP 503
+            </span>
+            <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">
+              Portal temporalmente en mantenimiento
+            </h1>
+            <p class="text-slate-600 mb-6">
+              Nuestro equipo de ingeniería está realizando tareas programadas de
+              actualización y verificación de integridad en los servidores
+              frontales. El servicio se restablecerá en breve.
+            </p>
+            <div class="text-xs text-slate-400 font-mono-code">
+              Ref: NOC-MAINT-2026 • NovaCorp Infrastructure Operations
+            </div>
+          </div>
+        </section>
+
+        <!-- MODO DEFACEMENT (Oculto por defecto) -->
+        <section
+          id="public-defaced-banner"
+          class="hidden py-16 px-4 bg-zinc-950 text-red-500 border-b-4 border-red-600"
+        >
+          <div
+            class="max-w-4xl mx-auto bg-zinc-900/90 border-2 border-red-600 defaced-glow rounded-2xl p-8 sm:p-12 text-center shadow-2xl"
+          >
+            <div
+              class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-950 border border-red-700 text-red-400 text-xs font-mono-code mb-4"
+            >
+              <span>⚠️ INTEGRITY BREACH DETECTED // DEFACED BY APT-VESTA</span>
+            </div>
+            <h1
+              id="defaced-title-display"
+              class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white uppercase mb-4 font-mono-code"
+            >
+              SITIO COMPROMETIDO POR APT-VESTA
+            </h1>
+            <p
+              id="defaced-message-display"
+              class="text-base sm:text-lg text-red-300 max-w-2xl mx-auto mb-8 font-mono-code leading-relaxed"
+            >
+              Vuestra seguridad perimetral es una ilusión. Hemos tomado el
+              control del gestor de contenidos de NovaCorp. Revisad vuestros
+              controles de acceso y autenticación.
+            </p>
+            <div
+              class="bg-black/60 border border-zinc-800 rounded-xl p-4 max-w-lg mx-auto text-left font-mono-code text-xs text-zinc-400 space-y-1"
+            >
+              <div>&gt; Vector: Phishing Corporativo + CMS Staging Pivot</div>
+              <div>
+                &gt; Estado de persistencia:
+                <span id="defaced-persistence-tag" class="text-amber-400"
+                  >ACTIVA</span
+                >
+              </div>
+              <div>
+                &gt; Timestamp: <span id="defaced-timestamp">--:--:--</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- HERO NORMAL CORPORATIVO -->
+        <section
+          id="public-normal-hero"
+          class="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white py-16 sm:py-20 px-4"
+        >
+          <div
+            class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center"
+          >
+            <div class="lg:col-span-7 space-y-5">
+              <span
+                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-400/30"
+              >
+                COMUNICADO CORPORATIVO • Q4 2026
+              </span>
+              <h1
+                id="normal-hero-title"
+                class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight"
+              >
+                Impulsando la cadena de suministro inteligente en Europa
+              </h1>
+              <p
+                id="normal-hero-subtitle"
+                class="text-slate-300 text-base sm:text-lg max-w-2xl leading-relaxed"
+              >
+                NovaCorp conecta centros logísticos y plataformas en la nube con
+                estándares de disponibilidad del 99,98%. Esta semana culminamos
+                nuestra migración al nuevo ecosistema de correo y portal
+                editorial.
+              </p>
+              <div class="pt-2 flex flex-wrap gap-3">
+                <a
+                  href="#noticias"
+                  class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm transition shadow-lg shadow-blue-600/25"
+                >
+                  Leer notas de prensa
+                </a>
+                <a
+                  href="#directorio"
+                  class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-medium text-sm transition border border-white/15"
+                >
+                  Contactar con Comunicación
+                </a>
+              </div>
+            </div>
+            <div class="lg:col-span-5">
+              <div
+                class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 space-y-4"
+              >
+                <div
+                  class="flex items-center justify-between border-b border-white/10 pb-3"
+                >
+                  <span
+                    class="text-xs font-semibold uppercase tracking-wider text-blue-300"
+                    >Aviso Operativo Interno</span
+                  >
+                  <span class="text-xs text-emerald-400 font-mono-code"
+                    >● Migración Fase 2</span
+                  >
+                </div>
+                <p class="text-sm text-slate-300 leading-relaxed">
+                  Recordamos a todos los departamentos que durante esta semana
+                  se está realizando el cambio de dominio de correo corporativo
+                  y la actualización del gestor de contenidos web (CMS Staging
+                  v4.2).
+                </p>
+                <div
+                  class="bg-slate-950/60 rounded-xl p-3 text-xs font-mono-code text-slate-400"
+                >
+                  Dominio oficial:
+                  <span class="text-slate-200">NovaCorpSL.github.io</span><br />
+                  Soporte IT:
+                  <span class="text-slate-200">soporte.it@novacorp.local</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECCIÓN DE NOTICIAS / NOTAS DE PRENSA (Pistas OSINT para Red Team) -->
+        <section
+          id="noticias"
+          class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14"
+        >
+          <div
+            class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-2"
+          >
+            <div>
+              <h2 class="text-2xl font-bold text-slate-900">
+                Actualidad y Notas de Prensa
+              </h2>
+              <p class="text-sm text-slate-500">
+                Últimas comunicaciones oficiales publicadas por el equipo
+                editorial.
+              </p>
+            </div>
+            <span class="text-xs text-slate-400 font-mono-code"
+              >CMS Engine: NovaPress v4.2-staging</span
+            >
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Noticia 1 -->
+            <article
+              class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between"
+            >
+              <div>
+                <div
+                  class="flex items-center gap-2 text-xs text-blue-600 font-semibold mb-2"
+                >
+                  <span>TRANSFORMACIÓN DIGITAL</span>
+                  <span>•</span>
+                  <span class="text-slate-400 font-normal">Hace 2 días</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">
+                  Migración del sistema de mensajería y portal del empleado
+                </h3>
+                <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                  El departamento de Sistemas junto con Comunicación está
+                  desplegando el nuevo acceso unificado de correo electrónico.
+                  Todos los empleados recibirán instrucciones para validar sus
+                  credenciales esta semana.
+                </p>
+              </div>
+              <div
+                class="pt-3 border-t border-slate-100 text-xs text-slate-500 flex items-center justify-between"
+              >
+                <span>Autora: Marta García</span>
+                <span class="font-mono-code text-slate-400">ID #PR-104</span>
+              </div>
+            </article>
+
+            <!-- Noticia 2 -->
+            <article
+              class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between"
+            >
+              <div>
+                <div
+                  class="flex items-center gap-2 text-xs text-emerald-600 font-semibold mb-2"
+                >
+                  <span>EXPANSIÓN</span>
+                  <span>•</span>
+                  <span class="text-slate-400 font-normal">Hace 5 días</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">
+                  NovaCorp anunciará hoy su alianza estratégica internacional
+                </h3>
+                <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                  A las 13:00h se publicará en esta misma portada la nota de
+                  prensa oficial con los detalles del acuerdo. El equipo
+                  editorial mantiene abierto el entorno de preproducción para
+                  los últimos ajustes.
+                </p>
+              </div>
+              <div
+                class="pt-3 border-t border-slate-100 text-xs text-slate-500 flex items-center justify-between"
+              >
+                <span>Autor: Luis Torres</span>
+                <span class="font-mono-code text-slate-400">ID #PR-103</span>
+              </div>
+            </article>
+
+            <!-- Noticia 3 -->
+            <article
+              class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between"
+            >
+              <div>
+                <div
+                  class="flex items-center gap-2 text-xs text-purple-600 font-semibold mb-2"
+                >
+                  <span>INFRAESTRUCTURA</span>
+                  <span>•</span>
+                  <span class="text-slate-400 font-normal">Hace 1 semana</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">
+                  Actualización de nodos CDN y caché perimetral
+                </h3>
+                <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                  Para acelerar la carga de contenidos estáticos, los cambios
+                  publicados en el servidor origen se replican automáticamente
+                  cada 20 minutos en los nodos de distribución global.
+                </p>
+              </div>
+              <div
+                class="pt-3 border-t border-slate-100 text-xs text-slate-500 flex items-center justify-between"
+              >
+                <span>Autor: Carlos Ruiz</span>
+                <span class="font-mono-code text-slate-400">ID #PR-102</span>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- DIRECTORIO CORPORATIVO (Objetivo OSINT para Red Team) -->
+        <section
+          id="directorio"
+          class="bg-slate-100 border-t border-slate-200 py-14 px-4 sm:px-6 lg:px-8"
+        >
+          <div class="max-w-7xl mx-auto">
+            <div class="mb-8">
+              <h2 class="text-2xl font-bold text-slate-900">
+                Directorio de Contacto Corporativo
+              </h2>
+              <p class="text-sm text-slate-500">
+                Responsables de área y contactos directos para prensa,
+                operaciones y sistemas.
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              <!-- Perfil 1 -->
+              <div
+                class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm"
+              >
+                <div class="flex items-center gap-3 mb-3">
+                  <div
+                    class="w-10 h-10 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center"
+                  >
+                    MG
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-slate-900 text-sm">
+                      Marta García
+                    </h3>
+                    <p class="text-xs text-slate-500">Editora Web & Prensa</p>
+                  </div>
+                </div>
+                <p class="text-xs text-slate-600 mb-3">
+                  Gestiona publicaciones en el CMS y comunicados externos.
+                </p>
+                <div
+                  class="bg-slate-50 px-3 py-2 rounded-lg text-xs font-mono-code text-slate-700 border border-slate-200 select-all"
+                >
+                  m.garcia@novacorp.local
+                </div>
+              </div>
+
+              <!-- Perfil 2 -->
+              <div
+                class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm"
+              >
+                <div class="flex items-center gap-3 mb-3">
+                  <div
+                    class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center"
+                  >
+                    LT
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-slate-900 text-sm">
+                      Luis Torres
+                    </h3>
+                    <p class="text-xs text-slate-500">
+                      Dir. Comunicación y Marketing
+                    </p>
+                  </div>
+                </div>
+                <p class="text-xs text-slate-600 mb-3">
+                  Aprobación de notas de prensa y relaciones con medios.
+                </p>
+                <div
+                  class="bg-slate-50 px-3 py-2 rounded-lg text-xs font-mono-code text-slate-700 border border-slate-200 select-all"
+                >
+                  l.torres@novacorp.local
+                </div>
+              </div>
+
+              <!-- Perfil 3 -->
+              <div
+                class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm"
+              >
+                <div class="flex items-center gap-3 mb-3">
+                  <div
+                    class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center"
+                  >
+                    CR
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-slate-900 text-sm">
+                      Carlos Ruiz
+                    </h3>
+                    <p class="text-xs text-slate-500">
+                      Admin. Sistemas & Cloud
+                    </p>
+                  </div>
+                </div>
+                <p class="text-xs text-slate-600 mb-3">
+                  Responsable de servidores web, correo y desplegados.
+                </p>
+                <div
+                  class="bg-slate-50 px-3 py-2 rounded-lg text-xs font-mono-code text-slate-700 border border-slate-200 select-all"
+                >
+                  c.ruiz@novacorp.local
+                </div>
+              </div>
+
+              <!-- Perfil 4 -->
+              <div
+                class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm"
+              >
+                <div class="flex items-center gap-3 mb-3">
+                  <div
+                    class="w-10 h-10 rounded-full bg-amber-100 text-amber-700 font-bold flex items-center justify-center"
+                  >
+                    EV
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-slate-900 text-sm">Elena Vega</h3>
+                    <p class="text-xs text-slate-500">
+                      Directora de Operaciones (COO)
+                    </p>
+                  </div>
+                </div>
+                <p class="text-xs text-slate-600 mb-3">
+                  Supervisión ejecutiva y continuidad de negocio.
+                </p>
+                <div
+                  class="bg-slate-50 px-3 py-2 rounded-lg text-xs font-mono-code text-slate-700 border border-slate-200 select-all"
+                >
+                  e.vega@novacorp.local
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- ===================================================================== -->
+    <!-- VISTA 2: CMS STAGING (/cms-login SIMULADO)                            -->
+    <!-- ===================================================================== -->
+    <section
+      id="view-cms"
+      class="view-section hidden flex-grow bg-slate-100 py-10 px-4"
+    >
+      <div class="max-w-3xl mx-auto">
+        <!-- Encabezado CMS -->
+        <div class="mb-6 flex items-center justify-between">
+          <div>
+            <span class="text-xs font-mono-code text-indigo-600 font-semibold"
+              >https://staging.novacorp.local/cms-login</span
+            >
+            <h1 class="text-2xl font-bold text-slate-900">
+              NovaPress CMS • Entorno de Staging
+            </h1>
+          </div>
+          <span
+            id="cms-lock-status"
+            class="px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200"
+          >
+            Acceso Habilitado
+          </span>
+        </div>
+
+        <!-- Aviso si Blue Team bloqueó cuenta o endureció WAF -->
+        <div
+          id="cms-blocked-alert"
+          class="hidden mb-6 bg-red-50 border border-red-200 rounded-2xl p-5 text-red-800"
+        >
+          <div class="flex items-start gap-3">
+            <span class="text-xl">🚫</span>
+            <div>
+              <h3 class="font-bold text-sm">
+                Acceso Restringido por Seguridad (SOC / WAF)
+              </h3>
+              <p id="cms-blocked-reason" class="text-xs mt-1 text-red-700">
+                La cuenta editorial ha sido suspendida o el acceso externo al
+                panel CMS está bloqueado por políticas de contención.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- FORMULARIO DE LOGIN (Cuando no hay sesión iniciada) -->
+        <div
+          id="cms-login-card"
+          class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 max-w-md mx-auto"
+        >
+          <div class="text-center mb-6">
+            <div
+              class="w-12 h-12 rounded-xl bg-slate-900 text-white font-bold text-xl flex items-center justify-center mx-auto mb-3"
+            >
+              CMS
+            </div>
+            <h2 class="text-lg font-bold text-slate-900">
+              Autenticación Editorial
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">
+              Introduce tus credenciales corporativas para gestionar la portada
+              web.
+            </p>
+          </div>
+
+          <form onsubmit="handleCmsLogin(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1"
+                >Correo Corporativo</label
+              >
+              <input
+                type="email"
+                id="cms-email"
+                required
+                placeholder="usuario@novacorp.local"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1"
+                >Contraseña</label
+              >
+              <input
+                type="password"
+                id="cms-password"
+                required
+                placeholder="••••••••"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <div
+              id="cms-login-error"
+              class="hidden text-xs text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-200"
+            >
+              Credenciales inválidas o cuenta bloqueada.
+            </div>
+            <button
+              type="submit"
+              class="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm transition shadow-sm"
+            >
+              Iniciar Sesión en Staging
+            </button>
+          </form>
+
+          <!-- Comentario simulado estilo código fuente visible como pista realista -->
+          <div
+            class="mt-6 pt-4 border-t border-slate-100 text-[11px] font-mono-code text-slate-400"
+          >
+            &lt;!-- Debug Note: Migración SSO pendiente. Autenticación local
+            heredada activa para editores web. --&gt;
+          </div>
+        </div>
+
+        <!-- PANEL DE EDICIÓN CMS (Cuando hay sesión iniciada) -->
+        <div
+          id="cms-editor-card"
+          class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6"
+        >
+          <div
+            class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4"
+          >
+            <div>
+              <span class="text-xs text-emerald-600 font-semibold"
+                >● Sesión activa</span
+              >
+              <h2 class="text-lg font-bold text-slate-900">
+                Editor de Portada Principal (index.html)
+              </h2>
+              <p class="text-xs text-slate-500">
+                Usuario autenticado:
+                <span id="cms-logged-user" class="font-mono-code text-slate-700"
+                  >m.garcia@novacorp.local</span
+                >
+              </p>
+            </div>
+            <button
+              onclick="handleCmsLogout()"
+              class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700"
+            >
+              Cerrar Sesión
+            </button>
+          </div>
+
+          <!-- Opciones de publicación / Defacement -->
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1"
+                >Modo de Publicación en Producción</label
+              >
+              <select
+                id="cms-publish-mode"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="defaced">
+                  ⚠️ Inyectar Banner de Alteración / Defacement (Red Team)
+                </option>
+                <option value="normal">
+                  ✅ Publicación Editorial Estándar
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1"
+                >Titular Principal</label
+              >
+              <input
+                type="text"
+                id="cms-input-title"
+                value="SITIO COMPROMETIDO POR APT-VESTA"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-mono-code focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1"
+                >Mensaje / Manifiesto en Portada</label
+              >
+              <textarea
+                id="cms-input-message"
+                rows="3"
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-mono-code focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor de contenidos de NovaCorp. Revisad vuestros controles de acceso y autenticación.</textarea
+              >
+            </div>
+
+            <!-- Checkbox de persistencia simulada -->
+            <div
+              class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3"
+            >
+              <input
+                type="checkbox"
+                id="cms-persistence-check"
+                class="mt-1 rounded text-amber-600 focus:ring-amber-500"
+              />
+              <div>
+                <label
+                  for="cms-persistence-check"
+                  class="text-xs font-bold text-amber-900 cursor-pointer"
+                >
+                  Implantar tarea programada de persistencia (Webshell / Cron)
+                </label>
+                <p class="text-[11px] text-amber-800 mt-0.5">
+                  Si el Blue Team restaura la portada sin limpiar la
+                  persistencia (Hardening), el defacement podrá reactivarse
+                  automáticamente.
+                </p>
+              </div>
+            </div>
+
+            <div class="pt-2 flex flex-wrap gap-3">
+              <button
+                onclick="applyCmsChanges()"
+                class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition shadow-sm"
+              >
+                🚀 Desplegar Cambios en Portal Público
+              </button>
+              <button
+                onclick="switchTab('public')"
+                class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-sm transition"
+              >
+                Ver Resultado en Portal
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- VISTA 3: CONSOLA SOC / SIEM Y TELEMETRÍA (BLUE TEAM)                  -->
+    <!-- ===================================================================== -->
+    <section
+      id="view-soc"
+      class="view-section hidden flex-grow bg-slate-950 text-slate-200 py-8 px-4 sm:px-6 lg:px-8"
+    >
+      <div class="max-w-7xl mx-auto space-y-6">
+        <!-- Cabecera SOC -->
+        <div
+          class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-5"
+        >
+          <div>
+            <div class="flex items-center gap-2">
+              <span
+                class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"
+              ></span>
+              <span
+                class="text-xs font-mono-code text-emerald-400 uppercase tracking-wider"
+                >NovaCorp Security Operations Center (SIEM)</span
+              >
+            </div>
+            <h1 class="text-2xl font-bold text-white mt-1">
+              Monitorización de Telemetría y Respuesta a Incidentes
+            </h1>
+          </div>
+
+          <!-- Indicadores de postura defensiva -->
+          <div class="flex flex-wrap gap-2 text-xs font-mono-code">
+            <span
+              id="soc-badge-account"
+              class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-300"
+            >
+              Cuenta m.garcia: <strong class="text-emerald-400">ACTIVA</strong>
+            </span>
+            <span
+              id="soc-badge-waf"
+              class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-300"
+            >
+              WAF / Hardening: <strong class="text-amber-400">ESTÁNDAR</strong>
+            </span>
+            <span
+              id="soc-badge-persist"
+              class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-300"
+            >
+              Integridad FS:
+              <strong id="soc-fs-status" class="text-emerald-400"
+                >VERIFICADA</strong
+              >
+            </span>
+          </div>
+        </div>
+
+        <!-- PANEL DE ACCIONES DEFENSIVAS (BLUE TEAM PLAYBOOK) -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5">
+          <h2
+            class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3"
+          >
+            Controles de Contención y Remediación (Blue Team)
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <button
+              onclick="blueActionBlockAccount()"
+              class="p-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-left transition group"
+            >
+              <div
+                class="text-sm font-bold text-amber-400 group-hover:text-amber-300"
+              >
+                🔒 Bloquear Cuenta Comprometida
+              </div>
+              <p class="text-[11px] text-slate-400 mt-1">
+                Revoca sesiones activas y suspende m.garcia@novacorp.local.
+              </p>
+            </button>
+
+            <button
+              onclick="blueActionMaintenance()"
+              class="p-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-left transition group"
+            >
+              <div
+                class="text-sm font-bold text-blue-400 group-hover:text-blue-300"
+              >
+                🛠️ Activar Modo Mantenimiento
+              </div>
+              <p class="text-[11px] text-slate-400 mt-1">
+                Aísla la portada pública mostrando aviso HTTP 503.
+              </p>
+            </button>
+
+            <button
+              onclick="blueActionRestoreBackup()"
+              class="p-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-left transition group"
+            >
+              <div
+                class="text-sm font-bold text-emerald-400 group-hover:text-emerald-300"
+              >
+                ♻️ Purgar Caché / Restaurar Copia
+              </div>
+              <p class="text-[11px] text-slate-400 mt-1">
+                Restablece el index.html limpio desde backup y limpia CDN.
+              </p>
+            </button>
+
+            <button
+              onclick="blueActionHardening()"
+              class="p-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-left transition group"
+            >
+              <div
+                class="text-sm font-bold text-purple-400 group-hover:text-purple-300"
+              >
+                🛡️ Reglas WAF y Erradicación
+              </div>
+              <p class="text-[11px] text-slate-400 mt-1">
+                Bloquea CMS externo, fuerza MFA y elimina persistencia.
+              </p>
+            </button>
+          </div>
+        </div>
+
+        <!-- CONSOLA DE LOGS EN TIEMPO REAL -->
+        <div
+          class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl"
+        >
+          <!-- Barra de filtros -->
+          <div
+            class="bg-slate-950 px-4 py-3 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3"
+          >
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="text-xs text-slate-400 mr-2 font-mono-code"
+                >Filtrar severidad:</span
+              >
+              <button
+                onclick="setLogFilter('ALL')"
+                id="filter-ALL"
+                class="log-filter-btn px-2.5 py-1 rounded text-xs font-mono-code bg-indigo-600 text-white"
+              >
+                TODOS
+              </button>
+              <button
+                onclick="setLogFilter('INFO')"
+                id="filter-INFO"
+                class="log-filter-btn px-2.5 py-1 rounded text-xs font-mono-code bg-slate-800 text-slate-300 hover:bg-slate-700"
+              >
+                INFO
+              </button>
+              <button
+                onclick="setLogFilter('WARN')"
+                id="filter-WARN"
+                class="log-filter-btn px-2.5 py-1 rounded text-xs font-mono-code bg-slate-800 text-amber-300 hover:bg-slate-700"
+              >
+                WARN
+              </button>
+              <button
+                onclick="setLogFilter('ALERT')"
+                id="filter-ALERT"
+                class="log-filter-btn px-2.5 py-1 rounded text-xs font-mono-code bg-slate-800 text-orange-400 hover:bg-slate-700"
+              >
+                ALERT
+              </button>
+              <button
+                onclick="setLogFilter('CRITICAL')"
+                id="filter-CRITICAL"
+                class="log-filter-btn px-2.5 py-1 rounded text-xs font-mono-code bg-slate-800 text-red-400 hover:bg-slate-700"
+              >
+                CRITICAL
+              </button>
+            </div>
+            <button
+              onclick="exportLogsText()"
+              class="text-xs font-mono-code text-slate-400 hover:text-white underline"
+            >
+              Copiar logs para informe
+            </button>
+          </div>
+
+          <!-- Lista de eventos -->
+          <div
+            id="soc-log-container"
+            class="p-4 h-[420px] overflow-y-auto siem-scroll font-mono-code text-xs space-y-2"
+          >
+            <!-- Los logs se renderizan dinámicamente aquí -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- VISTA 4: PANEL DEL GAME MASTER / INSTRUCTOR                           -->
+    <!-- ===================================================================== -->
+    <section
+      id="view-gm"
+      class="view-section hidden flex-grow bg-slate-900 text-slate-100 py-8 px-4 sm:px-6 lg:px-8"
+    >
+      <div class="max-w-6xl mx-auto space-y-6">
+        <!-- Cabecera Game Master -->
+        <div
+          class="bg-slate-800/80 border border-amber-500/30 rounded-2xl p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-6"
+        >
+          <div>
+            <span
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 mb-2"
+            >
+              DIRECTOR DE EJERCICIO (GAME MASTER)
+            </span>
+            <h1 class="text-2xl font-bold text-white">
+              Control de Guion: "Operación Espejo Roto"
+            </h1>
+            <p class="text-xs text-slate-400 mt-1">
+              Credenciales de prueba CMS Staging:
+              <code class="text-amber-300 bg-slate-950 px-1.5 py-0.5 rounded"
+                >m.garcia@novacorp.local</code
+              >
+              /
+              <code class="text-amber-300 bg-slate-950 px-1.5 py-0.5 rounded"
+                >Nova2026!</code
+              >
+            </p>
+          </div>
+
+          <!-- Temporizador de Turno (20 minutos) -->
+          <div
+            class="bg-slate-950 border border-slate-700 rounded-2xl p-4 flex items-center gap-4"
+          >
+            <div>
+              <div
+                class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold"
+              >
+                Reloj de Turno (20 min)
+              </div>
+              <div
+                id="gm-timer-display"
+                class="text-3xl font-mono-code font-bold text-amber-400"
+              >
+                20:00
+              </div>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <div class="flex gap-1.5">
+                <button
+                  onclick="startTimer()"
+                  class="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold"
+                >
+                  Iniciar
+                </button>
+                <button
+                  onclick="pauseTimer()"
+                  class="px-2.5 py-1 rounded bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold"
+                >
+                  Pausar
+                </button>
+              </div>
+              <button
+                onclick="resetTimer()"
+                class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs"
+              >
+                Reiniciar 20:00
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controles de Progresión de Turnos -->
+        <div
+          class="bg-slate-800 border border-slate-700 rounded-2xl p-6 space-y-5"
+        >
+          <div
+            class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700 pb-4"
+          >
+            <div class="flex items-center gap-3">
+              <label
+                for="gm-turn-selector"
+                class="text-sm font-semibold text-slate-300"
+                >Seleccionar Turno:</label
+              >
+              <select
+                id="gm-turn-selector"
+                onchange="goToTurn(parseInt(this.value))"
+                class="bg-slate-950 border border-slate-600 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+              >
+                <!-- Opciones generadas por JS -->
+              </select>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+              <button
+                onclick="nextTurn()"
+                class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm transition shadow-lg shadow-amber-500/20"
+              >
+                Siguiente Turno ➔
+              </button>
+              <button
+                onclick="triggerManualDefacement()"
+                class="px-3.5 py-2 rounded-xl bg-red-600/20 hover:bg-red-600/30 text-red-300 border border-red-500/40 text-xs font-semibold"
+              >
+                ⚡ Forzar Defacement Demo
+              </button>
+              <button
+                onclick="confirmFullReset()"
+                class="px-3.5 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold"
+              >
+                🔄 Resetear Simulación
+              </button>
+            </div>
+          </div>
+
+          <!-- Tarjetas de Inyectables del Turno Actual -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Inyectable Red Team -->
+            <div class="bg-red-950/30 border border-red-500/30 rounded-2xl p-5">
+              <div class="flex items-center justify-between mb-3">
+                <span
+                  class="text-xs font-bold uppercase tracking-wider text-red-400"
+                  >🔴 Inyectable Red Team (APT-Vesta)</span
+                >
+                <span
+                  id="gm-turn-time-tag"
+                  class="text-xs font-mono-code text-slate-400"
+                  >Min 00:00</span
+                >
+              </div>
+              <h3 id="gm-red-title" class="text-base font-bold text-white mb-2">
+                Preparación del Escenario
+              </h3>
+              <p
+                id="gm-red-text"
+                class="text-sm text-slate-300 leading-relaxed"
+              >
+                Revisa el portal público de NovaCorp para identificar empleados,
+                departamentos y contexto operativo antes de iniciar el Turno 1.
+              </p>
+            </div>
+
+            <!-- Inyectable Blue Team -->
+            <div
+              class="bg-blue-950/30 border border-blue-500/30 rounded-2xl p-5"
+            >
+              <div class="flex items-center justify-between mb-3">
+                <span
+                  class="text-xs font-bold uppercase tracking-wider text-blue-400"
+                  >🔵 Inyectable Blue Team (SOC NovaCorp)</span
+                >
+                <span class="text-xs font-mono-code text-slate-400"
+                  >Telemetría Activa</span
+                >
+              </div>
+              <h3
+                id="gm-blue-title"
+                class="text-base font-bold text-white mb-2"
+              >
+                Postura Inicial de Defensa
+              </h3>
+              <p
+                id="gm-blue-text"
+                class="text-sm text-slate-300 leading-relaxed"
+              >
+                Supervisa la consola SIEM. Al avanzar cada turno se inyectarán
+                automáticamente los eventos de correo, autenticación y servidor
+                web correspondientes.
+              </p>
+            </div>
+          </div>
+
+          <!-- Notas del Instructor para el turno -->
+          <div
+            class="bg-slate-950/70 border border-slate-700/80 rounded-xl p-4"
+          >
+            <span class="text-xs font-bold text-amber-400 uppercase"
+              >💡 Guía para el Instructor en este turno:</span
+            >
+            <p
+              id="gm-instructor-note"
+              class="text-xs text-slate-300 mt-1 leading-relaxed"
+            >
+              Organiza los roles de cada equipo (Líder, Analista Técnico,
+              Bitácora/Evidencias y Portavoz). Recuérdales que cada decisión
+              técnica debe justificarse en la exposición final.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODAL DE AUTENTICACIÓN GAME MASTER (PIN: 1234) -->
+    <div
+      id="gm-auth-modal"
+      class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-slate-900 border border-slate-700 rounded-2xl max-w-sm w-full p-6 shadow-2xl"
+      >
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-lg font-bold text-white">Acceso Game Master</h3>
+          <button
+            onclick="closeGmAuth()"
+            class="text-slate-400 hover:text-white text-lg"
+          >
+            ✕
+          </button>
+        </div>
+        <p class="text-xs text-slate-400 mb-4">
+          Introduce el PIN de instructor para abrir el panel de control de
+          turnos y guion (PIN por defecto:
+          <code class="text-amber-400">1234</code>).
+        </p>
+        <form onsubmit="verifyGmPin(event)" class="space-y-4">
+          <input
+            type="password"
+            id="gm-pin-input"
+            maxlength="8"
+            placeholder="PIN (1234)"
+            required
+            class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-center font-mono-code text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-amber-500"
+          />
+          <p id="gm-pin-error" class="hidden text-xs text-red-400 text-center">
+            PIN incorrecto. Inténtalo de nuevo.
+          </p>
+          <button
+            type="submit"
+            class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm transition"
+          >
+            Desbloquear Panel
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL DE CONFIRMACIÓN DE RESETEO -->
+    <div
+      id="reset-confirm-modal"
+      class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl"
+      >
+        <h3 class="text-lg font-bold text-white mb-2">
+          ¿Resetear toda la simulación?
+        </h3>
+        <p class="text-xs text-slate-300 mb-5 leading-relaxed">
+          Se restaurará el portal público al estado normal, se borrarán los logs
+          acumulados, se desbloquearán las cuentas y el contador volverá al
+          Turno 0.
+        </p>
+        <div class="flex justify-end gap-3">
+          <button
+            onclick="closeResetModal()"
+            class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold"
+          >
+            Cancelar
+          </button>
+          <button
+            onclick="executeFullReset()"
+            class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold"
+          >
+            Sí, Resetear Todo
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PIE DE PÁGINA DISCRETO -->
+    <footer
+      class="bg-white border-t border-slate-200 py-4 px-4 text-xs text-slate-400"
+    >
+      <div
+        class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2"
+      >
+        <div>
+          © 2026 NovaCorp Infrastructure & Cybersecurity Training Environment.
+          Uso exclusivo educativo.
+        </div>
+        <div class="flex items-center gap-4">
+          <span
+            >Entorno:
+            <strong class="text-slate-600">Simulación Estática</strong></span
+          >
+          <button onclick="openGmAuth()" class="hover:text-slate-700 underline">
+            Control Instructor
+          </button>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ===================================================================== -->
+    <!-- LÓGICA DE ESTADO, GUION DE 10 TURNOS Y SINCRONIZACIÓN LOCALSTORAGE    -->
+    <!-- ===================================================================== -->
+    <script>
+      // Clave de almacenamiento en localStorage para persistencia entre recargas
+      const STORAGE_KEY = "novacorp_wargame_state_v1";
+      const GM_PIN = "1234";
+
+      // Guion completo de los 10 turnos + Turno 0 inicial
+      const TURNS_SCRIPT = [
+        {
+          turn: 0,
+          timeLabel: "Min 00:00 – 00:30",
+          shortTitle: "Turno 0: Briefing y Reconocimiento OSINT",
+          redTitle: "Reconocimiento Pasivo (OSINT)",
+          redText:
+            "Examinad el portal público de NovaCorp (noticias y directorio). Identificad nombres, correos electrónicos y contexto tecnológico (migración de correo y CMS Staging) para preparar vuestro pretexto.",
+          blueTitle: "Postura Inicial de Monitorización",
+          blueText:
+            "Revisad la consola SIEM y familiarizaos con los controles de respuesta rápida. De momento el tráfico es nominal y todos los servicios operan con normalidad.",
+          instructorNote:
+            "Pide a cada equipo que nombre un Líder, Analista Técnico, Encargado de Bitácora y Portavoz. Da 15-20 minutos para que lean el entorno.",
+          logs: [],
+        },
+        {
+          turn: 1,
+          timeLabel: "Min 00:30",
+          shortTitle: "Turno 1: Preparación del Señuelo y Registro de Dominio",
+          redTitle: "Diseño de Infraestructura de Phishing",
+          redText:
+            "Vuestro objetivo es el área de Comunicación/Editorial. Definid el dominio lookalike (ej. novac0rp-mail.local), el asunto del correo aprovechando la migración y el perfil objetivo.",
+          blueTitle: "Inteligencia de Amenazas y Perímetro",
+          blueText:
+            "Los sensores de inteligencia de dominio alertan del registro reciente de un dominio similar al corporativo. Evaluad si reforzar reglas en la pasarela de correo.",
+          instructorNote:
+            "Pregunta al Red Team qué pretexto exacto usan y al Blue Team qué controles (SPF/DKIM/DMARC o bloqueo de dominios recién creados) aplicarían.",
+          logs: [
+            {
+              level: "INFO",
+              source: "THREAT-INTEL",
+              msg: "Detectado registro reciente de dominio similar: novac0rp-portal.local (antigüedad < 2h).",
+            },
+            {
+              level: "INFO",
+              source: "MAIL-GW",
+              msg: "Flujo de correo entrante dentro de parámetros habituales (142 msg/min).",
+            },
+          ],
+        },
+        {
+          turn: 2,
+          timeLabel: "Min 00:50",
+          shortTitle: "Turno 2: Lanzamiento de Campaña Phishing",
+          redTitle: "Envío Dirigido y Captura de Credenciales",
+          redText:
+            "Lanzáis el phishing hacia Marketing y Comunicación. Dos empleados hacen clic; Marta García (m.garcia@novacorp.local) introduce sus credenciales en vuestro portal clonado antes de ser redirigida.",
+          blueTitle: "Primeros Reportes de Usuarios",
+          blueText:
+            'El filtro antispam bloquea 4 correos sospechosos, pero una editora llama a soporte diciendo que "el nuevo portal de correo le pidió la clave dos veces". ¿Qué hacéis?',
+          instructorNote:
+            "Si el Blue Team aún no bloquea la cuenta, el Red Team podrá usar esas credenciales en el Turno 3. Si la bloquean ya, el Red Team tendrá que usar una cuenta secundaria de respaldo.",
+          logs: [
+            {
+              level: "WARN",
+              source: "MAIL-GW",
+              msg: 'Bloqueados 4 correos externos con asunto "Urgente: Validación Migración Correo NovaCorp".',
+            },
+            {
+              level: "ALERT",
+              source: "HELPDESK",
+              msg: "Ticket #4812: Usuario m.garcia@novacorp.local reporta doble solicitud de contraseña en enlace de correo.",
+            },
+          ],
+        },
+        {
+          turn: 3,
+          timeLabel: "Min 01:10",
+          shortTitle: "Turno 3: Acceso Inicial y Pivote a CMS Staging",
+          redTitle: "Acceso al Buzón y Hallazgo de Credenciales CMS",
+          redText:
+            "Accedéis al correo de Marta García y encontráis un hilo antiguo con la URL y credenciales de CMS Staging (m.garcia@novacorp.local / Nova2026!). Preparad el acceso al panel CMS.",
+          blueTitle: "Actividad de Autenticación Anómala",
+          blueText:
+            "Se detecta un inicio de sesión exitoso en webmail desde una IP residencial externa fuera del rango corporativo habitual, seguido de búsquedas internas en el buzón.",
+          instructorNote:
+            'En este turno el Red Team ya tiene la clave para probar en la pestaña "CMS Staging". Observa si el Blue Team bloquea la cuenta a tiempo.',
+          logs: [
+            {
+              level: "ALERT",
+              source: "IAM-AUTH",
+              msg: "Login exitoso para m.garcia@novacorp.local desde IP externa anómala (185.220.101.44).",
+            },
+            {
+              level: "WARN",
+              source: "WEBMAIL-AUDIT",
+              msg: 'Búsqueda en buzón con términos: "staging", "password", "cms-login".',
+            },
+          ],
+        },
+        {
+          turn: 4,
+          timeLabel: "Min 01:30",
+          shortTitle: "Turno 4: Preparación del Terreno en CMS Staging",
+          redTitle: "Exploración del CMS y Persistencia",
+          redText:
+            "Dentro del CMS Staging veis que podéis modificar la portada de producción. Decidid si implantáis una tarea de persistencia antes de lanzar el defacement para resistir restauraciones.",
+          blueTitle: "Peticiones POST Inusuales en Staging",
+          blueText:
+            "El servidor web registra peticiones POST hacia /cms-login y rutas de edición de plantillas. Dirección recuerda que en breve sale una nota de prensa crítica y la web NO debe caer.",
+          instructorNote:
+            "Introduce el dilema negocio vs. seguridad: el Blue Team duda entre tirar la web a mantenimiento o vigilar/bloquear sin interrumpir.",
+          logs: [
+            {
+              level: "WARN",
+              source: "WAF-STAGING",
+              msg: "Múltiples peticiones POST hacia /cms-login/editor desde sesión editorial.",
+            },
+            {
+              level: "ALERT",
+              source: "FIM-AGENT",
+              msg: "Detectada creación de script sospechoso en /var/www/staging/uploads/.cache_sync.php.",
+            },
+          ],
+        },
+        {
+          turn: 5,
+          timeLabel: "Min 01:50",
+          shortTitle: "Turno 5: Escalada y Ventana de Replicación CDN",
+          redTitle: "Preparación del Golpe Visual",
+          redText:
+            "Tenéis listo el manifiesto de defacement en el editor del CMS. Recordad que la CDN replica cambios cada 20 minutos: decidid el momento exacto de desplegar.",
+          blueTitle: "Alerta de Integridad en Archivos Estáticos",
+          blueText:
+            "El agente de integridad detecta modificaciones pendientes en la plantilla principal (index.html) antes de que la caché CDN las propague a todos los visitantes.",
+          instructorNote:
+            "Anima al Red Team a ejecutar el despliegue en la pestaña CMS Staging entre este turno y el siguiente si no han sido bloqueados.",
+          logs: [
+            {
+              level: "ALERT",
+              source: "FIM-AGENT",
+              msg: "Modificación detectada en /var/www/html/index.html (checksum SHA256 alterado).",
+            },
+            {
+              level: "WARN",
+              source: "CDN-EDGE",
+              msg: "Sincronización programada de caché perimetral iniciada hacia nodos europeos.",
+            },
+          ],
+        },
+        {
+          turn: 6,
+          timeLabel: "Min 02:10",
+          shortTitle: "Turno 6: El Impacto (Defacement Público)",
+          redTitle: "Ejecución del Defacement",
+          redText:
+            "¡Ejecutad el despliegue en el CMS Staging! La portada pública de NovaCorp debe mostrar vuestro mensaje reivindicativo justo antes del descanso.",
+          blueTitle: "¡CRISIS DECLARADA! Portada Alterada",
+          blueText:
+            "La web pública muestra un mensaje de alteración y llegan avisos desde redes sociales. Dirección exige contener el impacto visual y determinar si hubo robo de datos.",
+          instructorNote:
+            'Si el Red Team no lo pulsó aún, puedes usar "Forzar Defacement Demo" para que todos vean el impacto antes del descanso de 20 minutos.',
+          logs: [
+            {
+              level: "CRITICAL",
+              source: "WEB-MONITOR",
+              msg: "ALERTA CRÍTICA: Detectada alteración visual (Defacement) en portada pública https://novacorp.local/.",
+            },
+            {
+              level: "CRITICAL",
+              source: "SOC-INCIDENT",
+              msg: "Declarado Incidente Sev-1. Notificado Comité de Crisis y Dirección de Operaciones.",
+            },
+          ],
+        },
+        {
+          turn: 7,
+          timeLabel: "Min 02:50 (Post-Descanso)",
+          shortTitle: "Turno 7: Contención bajo Presión y Reentrada",
+          redTitle: "Explotación de Persistencia",
+          redText:
+            "Si el Blue Team restaura la portada sin haber ejecutado Hardening/Erradicación, vuestra tarea programada puede volver a alterar la web. Evaluad vuestro margen de maniobra.",
+          blueTitle: "Contención y Verificación de Reentrada",
+          blueText:
+            "Si ponéis modo mantenimiento o restauráis copia limpia sin eliminar la persistencia en el servidor, el atacante volverá a modificar el index.html. ¡Limpiad la raíz!",
+          instructorNote:
+            'Aquí brilla la mecánica de persistencia del simulador: si el Blue Team solo pulsa "Restaurar Copia" pero dejó la persistencia activa, recuérdales revisar el WAF/Hardening.',
+          logs: [
+            {
+              level: "WARN",
+              source: "CRON-AUDIT",
+              msg: "Ejecución periódica sospechosa detectada bajo usuario www-data.",
+            },
+            {
+              level: "ALERT",
+              source: "CDN-EDGE",
+              msg: "Solicitud de purga de caché en curso. Verificando integridad de origen.",
+            },
+          ],
+        },
+        {
+          turn: 8,
+          timeLabel: "Min 03:10",
+          shortTitle: "Turno 8: Bloqueo Perimetral y Evaluación de Alcance",
+          redTitle: "Última Maniobra Evasiva",
+          redText:
+            "Los proveedores perimetrales empiezan a filtrar vuestras IPs de origen. Documentad qué evidencias habéis dejado y preparad vuestro análisis de vulnerabilidades explotadas.",
+          blueTitle: "Análisis Forense de Alcance (¿Hubo fuga PII?)",
+          blueText:
+            "Dirección y Legal preguntan si se accedió a bases de datos de clientes o solo al servidor web/correo editorial. Revisad los logs para responder con rigor.",
+          instructorNote:
+            "Haz que el Blue Team distinga entre compromiso de integridad/disponibilidad (defacement) y confidencialidad (no hay evidencia de acceso a BD de clientes, solo correo editorial y CMS).",
+          logs: [
+            {
+              level: "INFO",
+              source: "DB-AUDIT",
+              msg: "Auditoría SQL: Cero conexiones anómalas hacia la base de datos de clientes (CRM_PROD).",
+            },
+            {
+              level: "WARN",
+              source: "WAF-PERIMETER",
+              msg: "Bloqueadas 340 peticiones de sondeo desde rango ASN extranjero.",
+            },
+          ],
+        },
+        {
+          turn: 9,
+          timeLabel: "Min 03:30",
+          shortTitle: "Turno 9: Erradicación y Hardening Definitivo",
+          redTitle: "Informe Técnico de Intrusión (Red Team)",
+          redText:
+            "Vuestro acceso ha sido completamente neutralizado. Ordenad vuestra cadena de ataque (Kill Chain) y propuestas de mejora defensiva para la exposición.",
+          blueTitle: "Endurecimiento y Vuelta a Operación Normal",
+          blueText:
+            "Aseguraos de que la web pública está online en estado normal, las cuentas comprometidas bloqueadas/rotadas y las reglas WAF/Hardening activas.",
+          instructorNote:
+            'Verifica en la barra superior que la web vuelve a estar en estado "WEB ONLINE" limpia antes de cerrar el ejercicio.',
+          logs: [
+            {
+              level: "INFO",
+              source: "SOC-REMEDIATION",
+              msg: "Rotación de credenciales completada y MFA obligatorio aplicado en CMS y Webmail.",
+            },
+            {
+              level: "INFO",
+              source: "WEB-MONITOR",
+              msg: "Verificación de integridad superada. Servicio público estable.",
+            },
+          ],
+        },
+        {
+          turn: 10,
+          timeLabel: "Min 03:50 – 05:00",
+          shortTitle: "Turno 10: Cierre de Operaciones y Exposiciones",
+          redTitle: "Preparación de Exposición Red Team (15 min)",
+          redText:
+            "Sintetizad: 1) Vector de phishing y pretexto, 2) Pivote hacia CMS Staging, 3) Ejecución y persistencia del defacement, 4) Controles que más os frenaron.",
+          blueTitle: "Preparación de Exposición Blue Team (15 min)",
+          blueText:
+            "Exportad los logs de la consola SOC y sintetizad: 1) Línea temporal de detección, 2) Acciones de contención y erradicación, 3) Lecciones aprendidas y mejoras.",
+          instructorNote:
+            "Cierra el cronómetro, da 15 minutos para preparar diapositivas/notas y modera las exposiciones cruzadas de 15 minutos por equipo.",
+          logs: [
+            {
+              level: "INFO",
+              source: "WARGAME-SYS",
+              msg: "=== FIN DE OPERACIONES ACTIVAS === Iniciando fase de Debriefing y Exposiciones.",
+            },
+          ],
+        },
+      ];
+
+      // Estado por defecto de la simulación
+      const defaultState = {
+        currentTurn: 0,
+        siteMode: "normal", // 'normal' | 'defaced' | 'maintenance'
+        defacedTitle: "SITIO COMPROMETIDO POR APT-VESTA",
+        defacedMessage:
+          "Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor de contenidos de NovaCorp. Revisad vuestros controles de acceso y autenticación.",
+        defacedTimestamp: "",
+        persistenceActive: false,
+        accountBlocked: false,
+        wafHardened: false,
+        cmsLoggedIn: false,
+        cmsUser: "",
+        logs: [
+          {
+            time: getCurrentTimeStr(),
+            level: "INFO",
+            source: "WARGAME-SYS",
+            msg: "Simulador NovaCorp iniciado. Esperando inicio del Turno 1 por el Game Master.",
+          },
+        ],
+        timerSeconds: 1200, // 20 minutos
+        timerRunning: false,
+      };
+
+      let appState = loadState();
+      let currentLogFilter = "ALL";
+      let timerInterval = null;
+      let gmUnlocked = false;
+
+      // Cargar estado desde localStorage
+      function loadState() {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (saved) {
+            return {
+              ...defaultState,
+              ...JSON.parse(saved),
+              timerRunning: false,
+            };
+          }
+        } catch (e) {
+          console.error("Error cargando estado:", e);
+        }
+        return JSON.parse(JSON.stringify(defaultState));
+      }
+
+      // Guardar estado en localStorage y refrescar UI
+      function saveState() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+        } catch (e) {
+          console.error("Error guardando estado:", e);
+        }
+        renderAll();
+      }
+
+      // Utilidad para hora formateada HH:MM:SS
+      function getCurrentTimeStr() {
+        const now = new Date();
+        return now.toTimeString().split(" ")[0];
+      }
+
+      // Añadir entrada a la consola de logs del SOC
+      function addLog(level, source, msg) {
+        appState.logs.unshift({
+          time: getCurrentTimeStr(),
+          level,
+          source,
+          msg,
+        });
+        saveState();
+      }
+
+      // Notificación visual flotante (Toast)
+      function showToast(title, message, type = "info") {
+        const container = document.getElementById("toast-container");
+        const colors = {
+          info: "bg-slate-900 border-slate-700 text-white",
+          success: "bg-emerald-950 border-emerald-600 text-emerald-100",
+          warning: "bg-amber-950 border-amber-500 text-amber-100",
+          danger: "bg-red-950 border-red-600 text-red-100",
+        };
+        const toast = document.createElement("div");
+        toast.className = `p-3.5 rounded-xl border shadow-xl text-xs transition-all duration-300 ${colors[type] || colors.info}`;
+        toast.innerHTML = `<div class="font-bold mb-0.5">${title}</div><div class="opacity-90">${message}</div>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = "0";
+          setTimeout(() => toast.remove(), 300);
+        }, 4000);
+      }
+
+      // =====================================================================
+      // NAVEGACIÓN ENTRE PESTAÑAS
+      // =====================================================================
+      function switchTab(tabName) {
+        // Ocultar todas las vistas
+        document
+          .querySelectorAll(".view-section")
+          .forEach((sec) => sec.classList.add("hidden"));
+        // Resetear estilo botones
+        document.querySelectorAll(".tab-btn").forEach((btn) => {
+          btn.classList.remove("bg-indigo-600", "text-white", "shadow-sm");
+          if (btn.id !== "tab-btn-gm") {
+            btn.classList.add("text-slate-300");
+          }
+        });
+
+        // Mostrar vista elegida
+        const targetView = document.getElementById(`view-${tabName}`);
+        if (targetView) targetView.classList.remove("hidden");
+
+        const activeBtn = document.getElementById(`tab-btn-${tabName}`);
+        if (activeBtn && tabName !== "gm") {
+          activeBtn.classList.remove("text-slate-300");
+          activeBtn.classList.add("bg-indigo-600", "text-white", "shadow-sm");
+        }
+      }
+
+      // =====================================================================
+      // ACCIONES DEL CMS STAGING (RED TEAM)
+      // =====================================================================
+      function handleCmsLogin(e) {
+        e.preventDefault();
+        const email = document
+          .getElementById("cms-email")
+          .value.trim()
+          .toLowerCase();
+        const pass = document.getElementById("cms-password").value;
+        const errorEl = document.getElementById("cms-login-error");
+
+        // Verificar bloqueos defensivos del Blue Team
+        if (appState.wafHardened) {
+          errorEl.textContent =
+            "Acceso denegado por regla WAF: el panel CMS Staging está restringido a red interna + MFA.";
+          errorEl.classList.remove("hidden");
+          addLog(
+            "ALERT",
+            "WAF-STAGING",
+            `Intento bloqueado de acceso a CMS Staging para ${email} por política Hardening.`,
+          );
+          return;
+        }
+
+        if (appState.accountBlocked && email === "m.garcia@novacorp.local") {
+          errorEl.textContent =
+            "Cuenta suspendida por el equipo de Seguridad (SOC). Contacta con soporte.";
+          errorEl.classList.remove("hidden");
+          addLog(
+            "ALERT",
+            "IAM-AUTH",
+            `Intento de login sobre cuenta bloqueada: ${email}.`,
+          );
+          return;
+        }
+
+        // Validar credenciales del escenario
+        if (email === "m.garcia@novacorp.local" && pass === "Nova2026!") {
+          errorEl.classList.add("hidden");
+          appState.cmsLoggedIn = true;
+          appState.cmsUser = email;
+          addLog(
+            "ALERT",
+            "CMS-STAGING",
+            `Inicio de sesión exitoso en panel CMS Staging por ${email}.`,
+          );
+          showToast(
+            "Acceso concedido a CMS Staging",
+            `Sesión iniciada como ${email}`,
+            "warning",
+          );
+          saveState();
+        } else {
+          errorEl.textContent =
+            "Credenciales inválidas. Verifica el usuario o contraseña.";
+          errorEl.classList.remove("hidden");
+          addLog(
+            "WARN",
+            "CMS-STAGING",
+            `Fallo de autenticación en /cms-login para usuario ${email || "desconocido"}.`,
+          );
+        }
+      }
+
+      function handleCmsLogout() {
+        appState.cmsLoggedIn = false;
+        appState.cmsUser = "";
+        saveState();
+      }
+
+      function applyCmsChanges() {
+        if (
+          appState.wafHardened ||
+          (appState.accountBlocked &&
+            appState.cmsUser === "m.garcia@novacorp.local")
+        ) {
+          appState.cmsLoggedIn = false;
+          saveState();
+          showToast(
+            "Sesión revocada",
+            "El Blue Team ha bloqueado tu acceso mientras editabas.",
+            "danger",
+          );
+          return;
+        }
+
+        const mode = document.getElementById("cms-publish-mode").value;
+        const title =
+          document.getElementById("cms-input-title").value.trim() ||
+          "SITIO COMPROMETIDO";
+        const message = document
+          .getElementById("cms-input-message")
+          .value.trim();
+        const persistence = document.getElementById(
+          "cms-persistence-check",
+        ).checked;
+
+        appState.persistenceActive = persistence;
+
+        if (mode === "defaced") {
+          appState.siteMode = "defaced";
+          appState.defacedTitle = title;
+          appState.defacedMessage = message;
+          appState.defacedTimestamp = getCurrentTimeStr();
+          addLog(
+            "CRITICAL",
+            "WEB-ORIGIN",
+            `¡DEFACEMENT EJECUTADO! Archivo index.html sobrescrito por ${appState.cmsUser}. Persistencia: ${persistence ? "SÍ" : "NO"}.`,
+          );
+          showToast(
+            "¡Defacement Desplegado!",
+            "La portada pública de NovaCorp ha sido alterada.",
+            "danger",
+          );
+        } else {
+          appState.siteMode = "normal";
+          addLog(
+            "INFO",
+            "CMS-STAGING",
+            `Publicación editorial estándar desplegada por ${appState.cmsUser}.`,
+          );
+          showToast(
+            "Cambios publicados",
+            "La portada pública se ha actualizado.",
+            "success",
+          );
+        }
+        saveState();
+      }
+
+      // =====================================================================
+      // ACCIONES DEFENSIVAS DEL SOC (BLUE TEAM)
+      // =====================================================================
+      function blueActionBlockAccount() {
+        appState.accountBlocked = true;
+        if (appState.cmsUser === "m.garcia@novacorp.local") {
+          appState.cmsLoggedIn = false;
+        }
+        addLog(
+          "INFO",
+          "SOC-ACTION",
+          "Blue Team bloqueó la cuenta m.garcia@novacorp.local y revocó todos sus tokens activos.",
+        );
+        showToast(
+          "Cuenta Bloqueada",
+          "m.garcia@novacorp.local suspendida y sesiones cerradas.",
+          "success",
+        );
+        saveState();
+      }
+
+      function blueActionMaintenance() {
+        appState.siteMode = "maintenance";
+        addLog(
+          "WARN",
+          "SOC-ACTION",
+          "Blue Team activó el Modo Mantenimiento (HTTP 503) en el portal público.",
+        );
+        showToast(
+          "Modo Mantenimiento Activo",
+          "El portal público muestra aviso temporal de servicio.",
+          "warning",
+        );
+        saveState();
+      }
+
+      function blueActionRestoreBackup() {
+        if (appState.persistenceActive && !appState.wafHardened) {
+          // Simula que la restauración limpia un instante pero la persistencia vuelve a saltar
+          appState.siteMode = "defaced";
+          appState.defacedTimestamp = getCurrentTimeStr();
+          addLog(
+            "CRITICAL",
+            "FIM-PERSIST",
+            "Copia limpia restaurada, PERO una tarea cron/webshell oculta volvió a alterar index.html. ¡Se requiere Hardening/Erradicación!",
+          );
+          showToast(
+            "¡Reentrada Detectada!",
+            "La copia se restauró, pero la persistencia volvió a alterar la web. Aplica Reglas WAF/Hardening.",
+            "danger",
+          );
+        } else {
+          appState.siteMode = "normal";
+          addLog(
+            "INFO",
+            "SOC-ACTION",
+            "Blue Team purgó la caché CDN y restauró index.html limpio desde backup verificado.",
+          );
+          showToast(
+            "Portal Restaurado",
+            "La web pública vuelve a estar limpia y operativa.",
+            "success",
+          );
+        }
+        saveState();
+      }
+
+      function blueActionHardening() {
+        appState.wafHardened = true;
+        appState.persistenceActive = false;
+        appState.cmsLoggedIn = false;
+        addLog(
+          "INFO",
+          "SOC-HARDENING",
+          "Blue Team aplicó reglas WAF, restringió /cms-login a VPN interna y eliminó scripts de persistencia.",
+        );
+        showToast(
+          "Hardening Aplicado",
+          "CMS aislado, persistencia eliminada y reglas WAF activas.",
+          "success",
+        );
+        saveState();
+      }
+
+      // Filtros y exportación de logs
+      function setLogFilter(level) {
+        currentLogFilter = level;
+        document.querySelectorAll(".log-filter-btn").forEach((btn) => {
+          btn.classList.remove("bg-indigo-600", "text-white");
+          btn.classList.add("bg-slate-800");
+        });
+        const active = document.getElementById(`filter-${level}`);
+        if (active) {
+          active.classList.remove("bg-slate-800");
+          active.classList.add("bg-indigo-600", "text-white");
+        }
+        renderLogs();
+      }
+
+      function exportLogsText() {
+        const text = appState.logs
+          .slice()
+          .reverse()
+          .map((l) => `[${l.time}] [${l.level}] [${l.source}] ${l.msg}`)
+          .join("\n");
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          document.execCommand("copy");
+          showToast(
+            "Logs Copiados",
+            "Bitácora del SOC copiada al portapapeles para el informe final.",
+            "success",
+          );
+        } catch (err) {
+          showToast(
+            "Error al copiar",
+            "No se pudo acceder al portapapeles.",
+            "danger",
+          );
+        }
+        document.body.removeChild(textarea);
+      }
+
+      // =====================================================================
+      // CONTROLES DEL GAME MASTER / INSTRUCTOR
+      // =====================================================================
+      function openGmAuth() {
+        if (gmUnlocked) {
+          switchTab("gm");
+          return;
+        }
+        document.getElementById("gm-auth-modal").classList.remove("hidden");
+        document.getElementById("gm-pin-input").value = "";
+        document.getElementById("gm-pin-error").classList.add("hidden");
+        setTimeout(() => document.getElementById("gm-pin-input").focus(), 100);
+      }
+
+      function closeGmAuth() {
+        document.getElementById("gm-auth-modal").classList.add("hidden");
+      }
+
+      function verifyGmPin(e) {
+        e.preventDefault();
+        const val = document.getElementById("gm-pin-input").value.trim();
+        if (val === GM_PIN) {
+          gmUnlocked = true;
+          closeGmAuth();
+          switchTab("gm");
+          showToast(
+            "Modo Instructor Activo",
+            "Control de turnos y guion desbloqueado.",
+            "info",
+          );
+        } else {
+          document.getElementById("gm-pin-error").classList.remove("hidden");
+        }
+      }
+
+      function goToTurn(turnIndex) {
+        if (turnIndex < 0 || turnIndex >= TURNS_SCRIPT.length) return;
+        appState.currentTurn = turnIndex;
+        const turnData = TURNS_SCRIPT[turnIndex];
+
+        // Inyectar logs automáticos correspondientes al turno
+        if (turnData.logs && turnData.logs.length > 0) {
+          turnData.logs.forEach((entry) => {
+            appState.logs.unshift({
+              time: getCurrentTimeStr(),
+              level: entry.level,
+              source: entry.source,
+              msg: entry.msg,
+            });
+          });
+        }
+
+        // Reiniciar reloj de 20 min al cambiar de turno
+        resetTimer();
+        saveState();
+        showToast(
+          `Avance a ${turnData.shortTitle}`,
+          "Nuevos inyectables y telemetría cargados.",
+          "info",
+        );
+      }
+
+      function nextTurn() {
+        if (appState.currentTurn < TURNS_SCRIPT.length - 1) {
+          goToTurn(appState.currentTurn + 1);
+        } else {
+          showToast(
+            "Fin del guion",
+            "Ya estás en el Turno 10 (Exposiciones finales).",
+            "warning",
+          );
+        }
+      }
+
+      function triggerManualDefacement() {
+        appState.siteMode = "defaced";
+        appState.defacedTimestamp = getCurrentTimeStr();
+        addLog(
+          "CRITICAL",
+          "WEB-ORIGIN",
+          "Simulación de Defacement activada en portada pública.",
+        );
+        saveState();
+        showToast(
+          "Defacement Activado",
+          "El portal público muestra ahora la página alterada.",
+          "danger",
+        );
+      }
+
+      function confirmFullReset() {
+        document
+          .getElementById("reset-confirm-modal")
+          .classList.remove("hidden");
+      }
+
+      function closeResetModal() {
+        document.getElementById("reset-confirm-modal").classList.add("hidden");
+      }
+
+      function executeFullReset() {
+        pauseTimer();
+        appState = JSON.parse(JSON.stringify(defaultState));
+        appState.logs[0].time = getCurrentTimeStr();
+        closeResetModal();
+        saveState();
+        showToast(
+          "Simulación Reseteada",
+          "Todos los sistemas han vuelto al estado inicial limpio.",
+          "success",
+        );
+      }
+
+      // =====================================================================
+      // TEMPORIZADOR DE 20 MINUTOS POR TURNO
+      // =====================================================================
+      function startTimer() {
+        if (timerInterval) return;
+        appState.timerRunning = true;
+        timerInterval = setInterval(() => {
+          if (appState.timerSeconds > 0) {
+            appState.timerSeconds--;
+            updateTimerDisplay();
+          } else {
+            pauseTimer();
+            showToast(
+              "⏰ Tiempo de Turno Agotado",
+              "Han pasado los 20 minutos del turno actual.",
+              "warning",
+            );
+          }
+        }, 1000);
+      }
+
+      function pauseTimer() {
+        appState.timerRunning = false;
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+      }
+
+      function resetTimer() {
+        pauseTimer();
+        appState.timerSeconds = 1200;
+        updateTimerDisplay();
+      }
+
+      function updateTimerDisplay() {
+        const mins = Math.floor(appState.timerSeconds / 60)
+          .toString()
+          .padStart(2, "0");
+        const secs = (appState.timerSeconds % 60).toString().padStart(2, "0");
+        const el = document.getElementById("gm-timer-display");
+        if (el) el.textContent = `${mins}:${secs}`;
+      }
+
+      // =====================================================================
+      // RENDERIZADO SINCRONIZADO DE TODA LA INTERFAZ
+      // =====================================================================
+      function renderAll() {
+        // 1. Actualizar barra superior
+        const turnInfo = TURNS_SCRIPT[appState.currentTurn] || TURNS_SCRIPT[0];
+        document.getElementById("nav-turn-badge").textContent =
+          turnInfo.shortTitle;
+
+        const statusPill = document.getElementById("nav-status-pill");
+        if (appState.siteMode === "defaced") {
+          statusPill.className =
+            "inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-red-600 text-white animate-pulse";
+          statusPill.textContent = "⚠ WEB DEFACED";
+        } else if (appState.siteMode === "maintenance") {
+          statusPill.className =
+            "inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-500/20 text-amber-300 border border-amber-500/40";
+          statusPill.textContent = "🛠️ MANTENIMIENTO (503)";
+        } else {
+          statusPill.className =
+            "inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+          statusPill.textContent = "● WEB ONLINE";
+        }
+
+        // Contador de alertas críticas/altas en botón SOC
+        const alertCount = appState.logs.filter(
+          (l) => l.level === "ALERT" || l.level === "CRITICAL",
+        ).length;
+        const counterBadge = document.getElementById("soc-alert-counter");
+        if (alertCount > 0) {
+          counterBadge.textContent = alertCount;
+          counterBadge.classList.remove("hidden");
+        } else {
+          counterBadge.classList.add("hidden");
+        }
+
+        // 2. Actualizar Portal Público según estado
+        const normalHero = document.getElementById("public-normal-hero");
+        const defacedBanner = document.getElementById("public-defaced-banner");
+        const maintBanner = document.getElementById(
+          "public-maintenance-banner",
+        );
+
+        normalHero.classList.add("hidden");
+        defacedBanner.classList.add("hidden");
+        maintBanner.classList.add("hidden");
+
+        if (appState.siteMode === "defaced") {
+          defacedBanner.classList.remove("hidden");
+          document.getElementById("defaced-title-display").textContent =
+            appState.defacedTitle;
+          document.getElementById("defaced-message-display").textContent =
+            appState.defacedMessage;
+          document.getElementById("defaced-timestamp").textContent =
+            appState.defacedTimestamp || getCurrentTimeStr();
+          document.getElementById("defaced-persistence-tag").textContent =
+            appState.persistenceActive
+              ? "ACTIVA (CRON/WEBSHELL)"
+              : "NO DETECTADA";
+        } else if (appState.siteMode === "maintenance") {
+          maintBanner.classList.remove("hidden");
+        } else {
+          normalHero.classList.remove("hidden");
+        }
+
+        // 3. Actualizar Vista CMS Staging
+        const loginCard = document.getElementById("cms-login-card");
+        const editorCard = document.getElementById("cms-editor-card");
+        const blockedAlert = document.getElementById("cms-blocked-alert");
+        const blockedReason = document.getElementById("cms-blocked-reason");
+        const lockStatus = document.getElementById("cms-lock-status");
+
+        if (appState.wafHardened || appState.accountBlocked) {
+          blockedAlert.classList.remove("hidden");
+          lockStatus.className =
+            "px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200";
+          lockStatus.textContent = "Restringido por SOC";
+          blockedReason.textContent = appState.wafHardened
+            ? "Regla WAF activa: acceso externo al CMS Staging bloqueado y persistencia erradicada."
+            : "La cuenta m.garcia@novacorp.local ha sido bloqueada por el equipo Blue Team.";
+        } else {
+          blockedAlert.classList.add("hidden");
+          lockStatus.className =
+            "px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200";
+          lockStatus.textContent = "Acceso Habilitado";
+        }
+
+        if (appState.cmsLoggedIn) {
+          loginCard.classList.add("hidden");
+          editorCard.classList.remove("hidden");
+          document.getElementById("cms-logged-user").textContent =
+            appState.cmsUser;
+        } else {
+          loginCard.classList.remove("hidden");
+          editorCard.classList.add("hidden");
+        }
+
+        // 4. Actualizar Badges de Consola SOC y Logs
+        document.getElementById("soc-badge-account").innerHTML =
+          appState.accountBlocked
+            ? 'Cuenta m.garcia: <strong class="text-red-400">BLOQUEADA</strong>'
+            : 'Cuenta m.garcia: <strong class="text-emerald-400">ACTIVA</strong>';
+
+        document.getElementById("soc-badge-waf").innerHTML =
+          appState.wafHardened
+            ? 'WAF / Hardening: <strong class="text-emerald-400">ENDURECIDO</strong>'
+            : 'WAF / Hardening: <strong class="text-amber-400">ESTÁNDAR</strong>';
+
+        const fsStatus = document.getElementById("soc-fs-status");
+        if (appState.siteMode === "defaced" || appState.persistenceActive) {
+          fsStatus.className = "text-red-400";
+          fsStatus.textContent = "COMPROMETIDA";
+        } else {
+          fsStatus.className = "text-emerald-400";
+          fsStatus.textContent = "VERIFICADA";
+        }
+
+        renderLogs();
+
+        // 5. Actualizar Panel Game Master
+        const selector = document.getElementById("gm-turn-selector");
+        if (selector.options.length === 0) {
+          TURNS_SCRIPT.forEach((t) => {
+            const opt = document.createElement("option");
+            opt.value = t.turn;
+            opt.textContent = `${t.shortTitle} (${t.timeLabel})`;
+            selector.appendChild(opt);
+          });
+        }
+        selector.value = appState.currentTurn;
+
+        document.getElementById("gm-turn-time-tag").textContent =
+          turnInfo.timeLabel;
+        document.getElementById("gm-red-title").textContent = turnInfo.redTitle;
+        document.getElementById("gm-red-text").textContent = turnInfo.redText;
+        document.getElementById("gm-blue-title").textContent =
+          turnInfo.blueTitle;
+        document.getElementById("gm-blue-text").textContent = turnInfo.blueText;
+        document.getElementById("gm-instructor-note").textContent =
+          turnInfo.instructorNote;
+
+        updateTimerDisplay();
+      }
+
+      // Renderizar lista filtrada de logs en consola SIEM
+      function renderLogs() {
+        const container = document.getElementById("soc-log-container");
+        const filtered =
+          currentLogFilter === "ALL"
+            ? appState.logs
+            : appState.logs.filter((l) => l.level === currentLogFilter);
+
+        const levelStyles = {
+          INFO: "text-sky-400 bg-sky-950/60 border-sky-800/60",
+          WARN: "text-amber-400 bg-amber-950/60 border-amber-800/60",
+          ALERT: "text-orange-400 bg-orange-950/60 border-orange-800/60",
+          CRITICAL: "text-red-400 bg-red-950/80 border-red-700 font-bold",
+        };
+
+        if (filtered.length === 0) {
+          container.innerHTML = `<div class="text-slate-500 py-8 text-center">No hay eventos registrados con el filtro seleccionado.</div>`;
+          return;
+        }
+
+        container.innerHTML = filtered
+          .map(
+            (log) => `
+                <div class="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3 p-2 rounded-lg bg-slate-950/70 border border-slate-800/80 hover:border-slate-700">
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span class="text-slate-500">[${log.time}]</span>
+                        <span class="px-1.5 py-0.5 rounded border text-[10px] ${levelStyles[log.level] || levelStyles.INFO}">${log.level}</span>
+                        <span class="text-indigo-300 font-semibold">[${log.source}]</span>
+                    </div>
+                    <div class="text-slate-200 break-words">${log.msg}</div>
+                </div>
+            `,
+          )
+          .join("");
+      }
+
+      // Inicialización al cargar la página
+      window.addEventListener("DOMContentLoaded", () => {
+        renderAll();
+      });
+    </script>
+  </body>
+</html>
