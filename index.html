@@ -46,10 +46,10 @@
       }
     </style>
   </head>
-  <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+  <body class="bg-black text-zinc-100 min-h-screen flex flex-col">
     <!-- BARRA SUPERIOR DE CONTROL DEL SIMULADOR (SWITCHER DE VISTAS) -->
     <div
-      class="bg-slate-900 text-slate-200 border-b border-slate-700 sticky top-0 z-50 shadow-md"
+      class="bg-[#09090b] text-zinc-200 border-b border-zinc-800 sticky top-0 z-50 shadow-md"
     >
       <div
         class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap items-center justify-between gap-3"
@@ -62,7 +62,7 @@
           </span>
           <span
             id="nav-turn-badge"
-            class="text-xs font-mono-code text-slate-400"
+            class="text-xs font-mono-code text-zinc-400"
           >
             Turno 0: Preparación
           </span>
@@ -89,14 +89,14 @@
           <button
             onclick="switchTab('cms')"
             id="tab-btn-cms"
-            class="tab-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-slate-300 hover:bg-slate-800"
+            class="tab-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-zinc-300 hover:bg-zinc-900"
           >
             🔐 CMS Staging
           </button>
           <button
             onclick="switchTab('soc')"
             id="tab-btn-soc"
-            class="tab-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-slate-300 hover:bg-slate-800 flex items-center gap-1.5"
+            class="tab-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-zinc-300 hover:bg-zinc-900 flex items-center gap-1.5"
           >
             🛡️ Consola SOC
             <span
@@ -108,7 +108,7 @@
           <button
             onclick="openGmAuth()"
             id="tab-btn-gm"
-            class="tab-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-amber-300 hover:bg-slate-800 border border-amber-500/30"
+            class="tab-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition text-amber-300 hover:bg-zinc-900 border border-amber-500/30"
           >
             🎛️ Game Master
           </button>
@@ -125,11 +125,11 @@
     <!-- ===================================================================== -->
     <!-- VISTA 1: PORTAL PÚBLICO DE NOVACORP                                   -->
     <!-- ===================================================================== -->
-    <main id="view-public" class="view-section flex-grow">
+    <main id="view-public" class="view-section flex-grow bg-black">
       <!-- Banner dinámico según estado: Normal, Defaced o Mantenimiento -->
       <div id="public-site-wrapper">
         <!-- Header Corporativo NovaCorp -->
-        <header class="bg-white border-b border-slate-200">
+        <header class="bg-[#050505] border-b border-zinc-800">
           <div
             class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"
           >
@@ -140,30 +140,30 @@
                 N
               </div>
               <div>
-                <span class="font-bold text-xl tracking-tight text-slate-900"
-                  >Nova<span class="text-blue-600">Corp</span></span
+                <span class="font-bold text-xl tracking-tight text-white"
+                  >Nova<span class="text-blue-500">Corp</span></span
                 >
                 <span
-                  class="hidden sm:inline-block text-xs text-slate-400 ml-2 border-l border-slate-200 pl-2"
+                  class="hidden sm:inline-block text-xs text-zinc-400 ml-2 border-l border-zinc-800 pl-2"
                   >Soluciones Logísticas & Cloud</span
                 >
               </div>
             </div>
             <div
-              class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-600"
+              class="hidden md:flex items-center space-x-6 text-sm font-medium text-zinc-300"
             >
-              <a href="#noticias" class="hover:text-blue-600 transition"
+              <a href="#noticias" class="hover:text-blue-400 transition"
                 >Sala de Prensa</a
               >
-              <a href="#directorio" class="hover:text-blue-600 transition"
+              <a href="#directorio" class="hover:text-blue-400 transition"
                 >Equipo Directivo</a
               >
-              <a href="#estado-servicio" class="hover:text-blue-600 transition"
+              <a href="#estado-servicio" class="hover:text-blue-400 transition"
                 >Infraestructura</a
               >
               <button
                 onclick="switchTab('cms')"
-                class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-md transition"
+                class="text-xs bg-zinc-900 hover:bg-zinc-800 text-zinc-200 px-3 py-1.5 rounded-md border border-zinc-700 transition"
               >
                 Acceso Empleados
               </button>
@@ -174,30 +174,30 @@
         <!-- MODO MANTENIMIENTO (Oculto por defecto) -->
         <section
           id="public-maintenance-banner"
-          class="hidden py-24 px-4 bg-amber-50 border-b border-amber-200"
+          class="hidden py-24 px-4 bg-[#050505] border-b border-amber-500/30"
         >
           <div
-            class="max-w-2xl mx-auto text-center bg-white p-8 sm:p-12 rounded-2xl shadow-lg border border-amber-300"
+            class="max-w-2xl mx-auto text-center bg-[#09090b] p-8 sm:p-12 rounded-2xl shadow-lg border border-amber-500/40"
           >
             <div
-              class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-5 text-3xl"
+              class="w-16 h-16 bg-amber-500/15 text-amber-400 rounded-full flex items-center justify-center mx-auto mb-5 text-3xl border border-amber-500/30"
             >
               🛠️
             </div>
             <span
-              class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 mb-3"
+              class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30 mb-3"
             >
               AVISO DE SERVICIO • HTTP 503
             </span>
-            <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">
+            <h1 class="text-2xl sm:text-3xl font-bold text-white mb-3">
               Portal temporalmente en mantenimiento
             </h1>
-            <p class="text-slate-600 mb-6">
+            <p class="text-zinc-400 mb-6">
               Nuestro equipo de ingeniería está realizando tareas programadas de
               actualización y verificación de integridad en los servidores
               frontales. El servicio se restablecerá en breve.
             </p>
-            <div class="text-xs text-slate-400 font-mono-code">
+            <div class="text-xs text-zinc-500 font-mono-code">
               Ref: NOC-MAINT-2026 • NovaCorp Infrastructure Operations
             </div>
           </div>
@@ -206,7 +206,7 @@
         <!-- MODO DEFACEMENT (Oculto por defecto) -->
         <section
           id="public-defaced-banner"
-          class="hidden py-16 px-4 bg-zinc-950 text-red-500 border-b-4 border-red-600"
+          class="hidden py-16 px-4 bg-black text-red-500 border-b-4 border-red-600"
         >
           <div
             class="max-w-4xl mx-auto bg-zinc-900/90 border-2 border-red-600 defaced-glow rounded-2xl p-8 sm:p-12 text-center shadow-2xl"
@@ -250,26 +250,26 @@
         <!-- HERO NORMAL CORPORATIVO -->
         <section
           id="public-normal-hero"
-          class="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white py-16 sm:py-20 px-4"
+          class="bg-gradient-to-br from-black via-[#090d16] to-black text-white py-16 sm:py-20 px-4 border-b border-zinc-900"
         >
           <div
             class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center"
           >
             <div class="lg:col-span-7 space-y-5">
               <span
-                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-300 border border-blue-400/30"
+                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/15 text-blue-300 border border-blue-400/30"
               >
                 COMUNICADO CORPORATIVO • Q4 2026
               </span>
               <h1
                 id="normal-hero-title"
-                class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight"
+                class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight text-white"
               >
                 Impulsando la cadena de suministro inteligente en Europa
               </h1>
               <p
                 id="normal-hero-subtitle"
-                class="text-slate-300 text-base sm:text-lg max-w-2xl leading-relaxed"
+                class="text-zinc-300 text-base sm:text-lg max-w-2xl leading-relaxed"
               >
                 NovaCorp conecta centros logísticos y plataformas en la nube con
                 estándares de disponibilidad del 99,98%. Esta semana culminamos
@@ -285,7 +285,7 @@
                 </a>
                 <a
                   href="#directorio"
-                  class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-medium text-sm transition border border-white/15"
+                  class="px-5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 font-medium text-sm transition border border-zinc-700"
                 >
                   Contactar con Comunicación
                 </a>
@@ -293,32 +293,34 @@
             </div>
             <div class="lg:col-span-5">
               <div
-                class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 space-y-4"
+                class="bg-[#09090b] border border-zinc-800 rounded-2xl p-6 space-y-4"
               >
                 <div
-                  class="flex items-center justify-between border-b border-white/10 pb-3"
+                  class="flex items-center justify-between border-b border-zinc-800 pb-3"
                 >
                   <span
-                    class="text-xs font-semibold uppercase tracking-wider text-blue-300"
+                    class="text-xs font-semibold uppercase tracking-wider text-blue-400"
                     >Aviso Operativo Interno</span
                   >
                   <span class="text-xs text-emerald-400 font-mono-code"
                     >● Migración Fase 2</span
                   >
                 </div>
-                <p class="text-sm text-slate-300 leading-relaxed">
+                <p class="text-sm text-zinc-300 leading-relaxed">
                   Recordamos a todos los departamentos que durante esta semana
                   se está realizando el cambio de dominio de correo corporativo
                   y la actualización del gestor de contenidos web (CMS Staging
                   v4.2).
                 </p>
                 <div
-                  class="bg-slate-950/60 rounded-xl p-3 text-xs font-mono-code text-slate-400"
+                  class="bg-black rounded-xl p-3 text-xs font-mono-code text-zinc-400 border border-zinc-800"
                 >
                   Dominio oficial:
-                  <span class="text-slate-200">NovaCorpSL.github.io</span><br />
+                  <span class="text-zinc-200">NovaCorpSL.github.io</span><br />
                   Soporte IT:
-                  <span class="text-slate-200">soporte.it@novacorp.local</span>
+                  <span class="text-zinc-200"
+                    >angelgarciacaparros@gmail.com</span
+                  >
                 </div>
               </div>
             </div>
@@ -328,21 +330,21 @@
         <!-- SECCIÓN DE NOTICIAS / NOTAS DE PRENSA (Pistas OSINT para Red Team) -->
         <section
           id="noticias"
-          class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14"
+          class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 bg-black"
         >
           <div
             class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-2"
           >
             <div>
-              <h2 class="text-2xl font-bold text-slate-900">
+              <h2 class="text-2xl font-bold text-white">
                 Actualidad y Notas de Prensa
               </h2>
-              <p class="text-sm text-slate-500">
+              <p class="text-sm text-zinc-400">
                 Últimas comunicaciones oficiales publicadas por el equipo
                 editorial.
               </p>
             </div>
-            <span class="text-xs text-slate-400 font-mono-code"
+            <span class="text-xs text-zinc-500 font-mono-code"
               >CMS Engine: NovaPress v4.2-staging</span
             >
           </div>
@@ -350,20 +352,20 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Noticia 1 -->
             <article
-              class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between"
+              class="bg-[#09090b] rounded-2xl border border-zinc-800 p-6 shadow-sm hover:border-zinc-700 transition flex flex-col justify-between"
             >
               <div>
                 <div
-                  class="flex items-center gap-2 text-xs text-blue-600 font-semibold mb-2"
+                  class="flex items-center gap-2 text-xs text-blue-400 font-semibold mb-2"
                 >
                   <span>TRANSFORMACIÓN DIGITAL</span>
                   <span>•</span>
-                  <span class="text-slate-400 font-normal">Hace 2 días</span>
+                  <span class="text-zinc-500 font-normal">Hace 2 días</span>
                 </div>
-                <h3 class="text-lg font-bold text-slate-900 mb-2">
+                <h3 class="text-lg font-bold text-white mb-2">
                   Migración del sistema de mensajería y portal del empleado
                 </h3>
-                <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                <p class="text-sm text-zinc-400 leading-relaxed mb-4">
                   El departamento de Sistemas junto con Comunicación está
                   desplegando el nuevo acceso unificado de correo electrónico.
                   Todos los empleados recibirán instrucciones para validar sus
@@ -371,29 +373,29 @@
                 </p>
               </div>
               <div
-                class="pt-3 border-t border-slate-100 text-xs text-slate-500 flex items-center justify-between"
+                class="pt-3 border-t border-zinc-800/80 text-xs text-zinc-400 flex items-center justify-between"
               >
-                <span>Autora: Marta García</span>
-                <span class="font-mono-code text-slate-400">ID #PR-104</span>
+                <span>Autor: Angel Garcia</span>
+                <span class="font-mono-code text-zinc-500">ID #PR-104</span>
               </div>
             </article>
 
             <!-- Noticia 2 -->
             <article
-              class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between"
+              class="bg-[#09090b] rounded-2xl border border-zinc-800 p-6 shadow-sm hover:border-zinc-700 transition flex flex-col justify-between"
             >
               <div>
                 <div
-                  class="flex items-center gap-2 text-xs text-emerald-600 font-semibold mb-2"
+                  class="flex items-center gap-2 text-xs text-emerald-400 font-semibold mb-2"
                 >
                   <span>EXPANSIÓN</span>
                   <span>•</span>
-                  <span class="text-slate-400 font-normal">Hace 5 días</span>
+                  <span class="text-zinc-500 font-normal">Hace 5 días</span>
                 </div>
-                <h3 class="text-lg font-bold text-slate-900 mb-2">
+                <h3 class="text-lg font-bold text-white mb-2">
                   NovaCorp anunciará hoy su alianza estratégica internacional
                 </h3>
-                <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                <p class="text-sm text-zinc-400 leading-relaxed mb-4">
                   A las 13:00h se publicará en esta misma portada la nota de
                   prensa oficial con los detalles del acuerdo. El equipo
                   editorial mantiene abierto el entorno de preproducción para
@@ -401,39 +403,39 @@
                 </p>
               </div>
               <div
-                class="pt-3 border-t border-slate-100 text-xs text-slate-500 flex items-center justify-between"
+                class="pt-3 border-t border-zinc-800/80 text-xs text-zinc-400 flex items-center justify-between"
               >
                 <span>Autor: Luis Torres</span>
-                <span class="font-mono-code text-slate-400">ID #PR-103</span>
+                <span class="font-mono-code text-zinc-500">ID #PR-103</span>
               </div>
             </article>
 
             <!-- Noticia 3 -->
             <article
-              class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between"
+              class="bg-[#09090b] rounded-2xl border border-zinc-800 p-6 shadow-sm hover:border-zinc-700 transition flex flex-col justify-between"
             >
               <div>
                 <div
-                  class="flex items-center gap-2 text-xs text-purple-600 font-semibold mb-2"
+                  class="flex items-center gap-2 text-xs text-purple-400 font-semibold mb-2"
                 >
                   <span>INFRAESTRUCTURA</span>
                   <span>•</span>
-                  <span class="text-slate-400 font-normal">Hace 1 semana</span>
+                  <span class="text-zinc-500 font-normal">Hace 1 semana</span>
                 </div>
-                <h3 class="text-lg font-bold text-slate-900 mb-2">
+                <h3 class="text-lg font-bold text-white mb-2">
                   Actualización de nodos CDN y caché perimetral
                 </h3>
-                <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                <p class="text-sm text-zinc-400 leading-relaxed mb-4">
                   Para acelerar la carga de contenidos estáticos, los cambios
                   publicados en el servidor origen se replican automáticamente
                   cada 20 minutos en los nodos de distribución global.
                 </p>
               </div>
               <div
-                class="pt-3 border-t border-slate-100 text-xs text-slate-500 flex items-center justify-between"
+                class="pt-3 border-t border-zinc-800/80 text-xs text-zinc-400 flex items-center justify-between"
               >
                 <span>Autor: Carlos Ruiz</span>
-                <span class="font-mono-code text-slate-400">ID #PR-102</span>
+                <span class="font-mono-code text-zinc-500">ID #PR-102</span>
               </div>
             </article>
           </div>
@@ -442,71 +444,70 @@
         <!-- DIRECTORIO CORPORATIVO (Objetivo OSINT para Red Team) -->
         <section
           id="directorio"
-          class="bg-slate-100 border-t border-slate-200 py-14 px-4 sm:px-6 lg:px-8"
+          class="bg-[#050505] border-t border-zinc-800 py-14 px-4 sm:px-6 lg:px-8"
         >
           <div class="max-w-7xl mx-auto">
             <div class="mb-8">
-              <h2 class="text-2xl font-bold text-slate-900">
+              <h2 class="text-2xl font-bold text-white">
                 Directorio de Contacto Corporativo
               </h2>
-              <p class="text-sm text-slate-500">
+              <p class="text-sm text-zinc-400">
                 Responsables de área y contactos directos para prensa,
                 operaciones y sistemas.
               </p>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              <!-- Perfil 1 -->
+              <!-- Perfil 1 (Usuario vulnerable) -->
               <div
-                class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm"
+                class="bg-[#09090b] rounded-2xl p-5 border border-zinc-800 shadow-sm"
               >
                 <div class="flex items-center gap-3 mb-3">
                   <div
-                    class="w-10 h-10 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center"
+                    class="w-10 h-10 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 font-bold flex items-center justify-center"
                   >
-                    MG
+                    AG
                   </div>
                   <div>
-                    <h3 class="font-bold text-slate-900 text-sm">
-                      Marta García
-                    </h3>
-                    <p class="text-xs text-slate-500">Editora Web & Prensa</p>
+                    <h3 class="font-bold text-white text-sm">Angel Garcia</h3>
+                    <p class="text-xs text-zinc-400">
+                      Poderoso hechicero de magia negra
+                    </p>
                   </div>
                 </div>
-                <p class="text-xs text-slate-600 mb-3">
-                  Gestiona publicaciones en el CMS y comunicados externos.
+                <p class="text-xs text-zinc-400 mb-3">
+                  Hackea cosas telepaticamente y nunca ha sido hackeado por
+                  otros
                 </p>
                 <div
-                  class="bg-slate-50 px-3 py-2 rounded-lg text-xs font-mono-code text-slate-700 border border-slate-200 select-all"
+                  class="bg-black px-3 py-2 rounded-lg text-xs font-mono-code text-zinc-200 border border-zinc-800 select-all break-all"
                 >
-                  m.garcia@novacorp.local
+                  angel.garcia14@murciaeduca.es
                 </div>
               </div>
 
               <!-- Perfil 2 -->
               <div
-                class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm"
+                class="bg-[#09090b] rounded-2xl p-5 border border-zinc-800 shadow-sm"
               >
                 <div class="flex items-center gap-3 mb-3">
                   <div
-                    class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center"
+                    class="w-10 h-10 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-bold flex items-center justify-center"
                   >
                     LT
                   </div>
                   <div>
-                    <h3 class="font-bold text-slate-900 text-sm">
-                      Luis Torres
-                    </h3>
-                    <p class="text-xs text-slate-500">
+                    <h3 class="font-bold text-white text-sm">Luis Torres</h3>
+                    <p class="text-xs text-zinc-400">
                       Dir. Comunicación y Marketing
                     </p>
                   </div>
                 </div>
-                <p class="text-xs text-slate-600 mb-3">
+                <p class="text-xs text-zinc-400 mb-3">
                   Aprobación de notas de prensa y relaciones con medios.
                 </p>
                 <div
-                  class="bg-slate-50 px-3 py-2 rounded-lg text-xs font-mono-code text-slate-700 border border-slate-200 select-all"
+                  class="bg-black px-3 py-2 rounded-lg text-xs font-mono-code text-zinc-200 border border-zinc-800 select-all break-all"
                 >
                   l.torres@novacorp.local
                 </div>
@@ -514,28 +515,24 @@
 
               <!-- Perfil 3 -->
               <div
-                class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm"
+                class="bg-[#09090b] rounded-2xl p-5 border border-zinc-800 shadow-sm"
               >
                 <div class="flex items-center gap-3 mb-3">
                   <div
-                    class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center"
+                    class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold flex items-center justify-center"
                   >
                     CR
                   </div>
                   <div>
-                    <h3 class="font-bold text-slate-900 text-sm">
-                      Carlos Ruiz
-                    </h3>
-                    <p class="text-xs text-slate-500">
-                      Admin. Sistemas & Cloud
-                    </p>
+                    <h3 class="font-bold text-white text-sm">Carlos Ruiz</h3>
+                    <p class="text-xs text-zinc-400">Admin. Sistemas & Cloud</p>
                   </div>
                 </div>
-                <p class="text-xs text-slate-600 mb-3">
+                <p class="text-xs text-zinc-400 mb-3">
                   Responsable de servidores web, correo y desplegados.
                 </p>
                 <div
-                  class="bg-slate-50 px-3 py-2 rounded-lg text-xs font-mono-code text-slate-700 border border-slate-200 select-all"
+                  class="bg-black px-3 py-2 rounded-lg text-xs font-mono-code text-zinc-200 border border-zinc-800 select-all break-all"
                 >
                   c.ruiz@novacorp.local
                 </div>
@@ -543,26 +540,26 @@
 
               <!-- Perfil 4 -->
               <div
-                class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm"
+                class="bg-[#09090b] rounded-2xl p-5 border border-zinc-800 shadow-sm"
               >
                 <div class="flex items-center gap-3 mb-3">
                   <div
-                    class="w-10 h-10 rounded-full bg-amber-100 text-amber-700 font-bold flex items-center justify-center"
+                    class="w-10 h-10 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold flex items-center justify-center"
                   >
                     EV
                   </div>
                   <div>
-                    <h3 class="font-bold text-slate-900 text-sm">Elena Vega</h3>
-                    <p class="text-xs text-slate-500">
+                    <h3 class="font-bold text-white text-sm">Elena Vega</h3>
+                    <p class="text-xs text-zinc-400">
                       Directora de Operaciones (COO)
                     </p>
                   </div>
                 </div>
-                <p class="text-xs text-slate-600 mb-3">
+                <p class="text-xs text-zinc-400 mb-3">
                   Supervisión ejecutiva y continuidad de negocio.
                 </p>
                 <div
-                  class="bg-slate-50 px-3 py-2 rounded-lg text-xs font-mono-code text-slate-700 border border-slate-200 select-all"
+                  class="bg-black px-3 py-2 rounded-lg text-xs font-mono-code text-zinc-200 border border-zinc-800 select-all break-all"
                 >
                   e.vega@novacorp.local
                 </div>
@@ -578,22 +575,22 @@
     <!-- ===================================================================== -->
     <section
       id="view-cms"
-      class="view-section hidden flex-grow bg-slate-100 py-10 px-4"
+      class="view-section hidden flex-grow bg-black py-10 px-4"
     >
       <div class="max-w-3xl mx-auto">
         <!-- Encabezado CMS -->
-        <div class="mb-6 flex items-center justify-between">
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-2">
           <div>
-            <span class="text-xs font-mono-code text-indigo-600 font-semibold"
+            <span class="text-xs font-mono-code text-indigo-400 font-semibold"
               >https://staging.novacorp.local/cms-login</span
             >
-            <h1 class="text-2xl font-bold text-slate-900">
+            <h1 class="text-2xl font-bold text-white">
               NovaPress CMS • Entorno de Staging
             </h1>
           </div>
           <span
             id="cms-lock-status"
-            class="px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200"
+            class="px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
           >
             Acceso Habilitado
           </span>
@@ -602,15 +599,15 @@
         <!-- Aviso si Blue Team bloqueó cuenta o endureció WAF -->
         <div
           id="cms-blocked-alert"
-          class="hidden mb-6 bg-red-50 border border-red-200 rounded-2xl p-5 text-red-800"
+          class="hidden mb-6 bg-red-950/50 border border-red-700/60 rounded-2xl p-5 text-red-200"
         >
           <div class="flex items-start gap-3">
             <span class="text-xl">🚫</span>
             <div>
-              <h3 class="font-bold text-sm">
+              <h3 class="font-bold text-sm text-red-300">
                 Acceso Restringido por Seguridad (SOC / WAF)
               </h3>
-              <p id="cms-blocked-reason" class="text-xs mt-1 text-red-700">
+              <p id="cms-blocked-reason" class="text-xs mt-1 text-red-200/90">
                 La cuenta editorial ha sido suspendida o el acceso externo al
                 panel CMS está bloqueado por políticas de contención.
               </p>
@@ -621,18 +618,18 @@
         <!-- FORMULARIO DE LOGIN (Cuando no hay sesión iniciada) -->
         <div
           id="cms-login-card"
-          class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 max-w-md mx-auto"
+          class="bg-[#09090b] rounded-2xl shadow-sm border border-zinc-800 p-6 sm:p-8 max-w-md mx-auto"
         >
           <div class="text-center mb-6">
             <div
-              class="w-12 h-12 rounded-xl bg-slate-900 text-white font-bold text-xl flex items-center justify-center mx-auto mb-3"
+              class="w-12 h-12 rounded-xl bg-zinc-900 border border-zinc-700 text-white font-bold text-xl flex items-center justify-center mx-auto mb-3"
             >
               CMS
             </div>
-            <h2 class="text-lg font-bold text-slate-900">
+            <h2 class="text-lg font-bold text-white">
               Autenticación Editorial
             </h2>
-            <p class="text-xs text-slate-500 mt-1">
+            <p class="text-xs text-zinc-400 mt-1">
               Introduce tus credenciales corporativas para gestionar la portada
               web.
             </p>
@@ -640,19 +637,19 @@
 
           <form onsubmit="handleCmsLogin(event)" class="space-y-4">
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1"
+              <label class="block text-xs font-semibold text-zinc-300 mb-1"
                 >Correo Corporativo</label
               >
               <input
                 type="email"
                 id="cms-email"
                 required
-                placeholder="usuario@novacorp.local"
-                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="angel.garcia14@murciaeduca.es"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-black border border-zinc-700 text-white placeholder-zinc-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1"
+              <label class="block text-xs font-semibold text-zinc-300 mb-1"
                 >Contraseña</label
               >
               <input
@@ -660,18 +657,18 @@
                 id="cms-password"
                 required
                 placeholder="••••••••"
-                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-black border border-zinc-700 text-white placeholder-zinc-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
             <div
               id="cms-login-error"
-              class="hidden text-xs text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-200"
+              class="hidden text-xs text-red-300 bg-red-950/60 p-2.5 rounded-lg border border-red-800"
             >
               Credenciales inválidas o cuenta bloqueada.
             </div>
             <button
               type="submit"
-              class="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm transition shadow-sm"
+              class="w-full py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition shadow-sm"
             >
               Iniciar Sesión en Staging
             </button>
@@ -679,7 +676,7 @@
 
           <!-- Comentario simulado estilo código fuente visible como pista realista -->
           <div
-            class="mt-6 pt-4 border-t border-slate-100 text-[11px] font-mono-code text-slate-400"
+            class="mt-6 pt-4 border-t border-zinc-800 text-[11px] font-mono-code text-zinc-500"
           >
             &lt;!-- Debug Note: Migración SSO pendiente. Autenticación local
             heredada activa para editores web. --&gt;
@@ -689,28 +686,28 @@
         <!-- PANEL DE EDICIÓN CMS (Cuando hay sesión iniciada) -->
         <div
           id="cms-editor-card"
-          class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6"
+          class="hidden bg-[#09090b] rounded-2xl shadow-sm border border-zinc-800 p-6 sm:p-8 space-y-6"
         >
           <div
-            class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4"
+            class="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800 pb-4"
           >
             <div>
-              <span class="text-xs text-emerald-600 font-semibold"
+              <span class="text-xs text-emerald-400 font-semibold"
                 >● Sesión activa</span
               >
-              <h2 class="text-lg font-bold text-slate-900">
+              <h2 class="text-lg font-bold text-white">
                 Editor de Portada Principal (index.html)
               </h2>
-              <p class="text-xs text-slate-500">
+              <p class="text-xs text-zinc-400">
                 Usuario autenticado:
-                <span id="cms-logged-user" class="font-mono-code text-slate-700"
-                  >m.garcia@novacorp.local</span
+                <span id="cms-logged-user" class="font-mono-code text-zinc-200"
+                  >angel.garcia14@murciaeduca.es</span
                 >
               </p>
             </div>
             <button
               onclick="handleCmsLogout()"
-              class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700"
+              class="px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-700"
             >
               Cerrar Sesión
             </button>
@@ -719,12 +716,12 @@
           <!-- Opciones de publicación / Defacement -->
           <div class="space-y-4">
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1"
+              <label class="block text-xs font-semibold text-zinc-300 mb-1"
                 >Modo de Publicación en Producción</label
               >
               <select
                 id="cms-publish-mode"
-                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-black border border-zinc-700 text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="defaced">
                   ⚠️ Inyectar Banner de Alteración / Defacement (Red Team)
@@ -736,25 +733,25 @@
             </div>
 
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1"
+              <label class="block text-xs font-semibold text-zinc-300 mb-1"
                 >Titular Principal</label
               >
               <input
                 type="text"
                 id="cms-input-title"
                 value="SITIO COMPROMETIDO POR APT-VESTA"
-                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-mono-code focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-black border border-zinc-700 text-white text-sm font-mono-code focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
             </div>
 
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1"
+              <label class="block text-xs font-semibold text-zinc-300 mb-1"
                 >Mensaje / Manifiesto en Portada</label
               >
               <textarea
                 id="cms-input-message"
                 rows="3"
-                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-mono-code focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                class="w-full px-3.5 py-2.5 rounded-xl bg-black border border-zinc-700 text-white text-sm font-mono-code focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
 Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor de contenidos de NovaCorp. Revisad vuestros controles de acceso y autenticación.</textarea
               >
@@ -762,7 +759,7 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
 
             <!-- Checkbox de persistencia simulada -->
             <div
-              class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3"
+              class="bg-amber-950/30 border border-amber-500/40 rounded-xl p-4 flex items-start gap-3"
             >
               <input
                 type="checkbox"
@@ -772,11 +769,11 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
               <div>
                 <label
                   for="cms-persistence-check"
-                  class="text-xs font-bold text-amber-900 cursor-pointer"
+                  class="text-xs font-bold text-amber-300 cursor-pointer"
                 >
                   Implantar tarea programada de persistencia (Webshell / Cron)
                 </label>
-                <p class="text-[11px] text-amber-800 mt-0.5">
+                <p class="text-[11px] text-amber-200/80 mt-0.5">
                   Si el Blue Team restaura la portada sin limpiar la
                   persistencia (Hardening), el defacement podrá reactivarse
                   automáticamente.
@@ -793,7 +790,7 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
               </button>
               <button
                 onclick="switchTab('public')"
-                class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-sm transition"
+                class="px-4 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-700 font-medium text-sm transition"
               >
                 Ver Resultado en Portal
               </button>
@@ -808,12 +805,12 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
     <!-- ===================================================================== -->
     <section
       id="view-soc"
-      class="view-section hidden flex-grow bg-slate-950 text-slate-200 py-8 px-4 sm:px-6 lg:px-8"
+      class="view-section hidden flex-grow bg-black text-zinc-200 py-8 px-4 sm:px-6 lg:px-8"
     >
       <div class="max-w-7xl mx-auto space-y-6">
         <!-- Cabecera SOC -->
         <div
-          class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-5"
+          class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-800 pb-5"
         >
           <div>
             <div class="flex items-center gap-2">
@@ -834,19 +831,20 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
           <div class="flex flex-wrap gap-2 text-xs font-mono-code">
             <span
               id="soc-badge-account"
-              class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-300"
+              class="px-3 py-1.5 rounded-lg bg-[#09090b] border border-zinc-800 text-zinc-300"
             >
-              Cuenta m.garcia: <strong class="text-emerald-400">ACTIVA</strong>
+              Cuenta angel.garcia14@murciaeduca.es:
+              <strong class="text-emerald-400">ACTIVA</strong>
             </span>
             <span
               id="soc-badge-waf"
-              class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-300"
+              class="px-3 py-1.5 rounded-lg bg-[#09090b] border border-zinc-800 text-zinc-300"
             >
               WAF / Hardening: <strong class="text-amber-400">ESTÁNDAR</strong>
             </span>
             <span
               id="soc-badge-persist"
-              class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-300"
+              class="px-3 py-1.5 rounded-lg bg-[#09090b] border border-zinc-800 text-zinc-300"
             >
               Integridad FS:
               <strong id="soc-fs-status" class="text-emerald-400"
@@ -857,65 +855,66 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
         </div>
 
         <!-- PANEL DE ACCIONES DEFENSIVAS (BLUE TEAM PLAYBOOK) -->
-        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5">
+        <div class="bg-[#09090b] border border-zinc-800 rounded-2xl p-5">
           <h2
-            class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3"
+            class="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3"
           >
             Controles de Contención y Remediación (Blue Team)
           </h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <button
               onclick="blueActionBlockAccount()"
-              class="p-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-left transition group"
+              class="p-3.5 rounded-xl bg-black hover:bg-zinc-900 border border-zinc-800 text-left transition group"
             >
               <div
                 class="text-sm font-bold text-amber-400 group-hover:text-amber-300"
               >
                 🔒 Bloquear Cuenta Comprometida
               </div>
-              <p class="text-[11px] text-slate-400 mt-1">
-                Revoca sesiones activas y suspende m.garcia@novacorp.local.
+              <p class="text-[11px] text-zinc-400 mt-1">
+                Revoca sesiones activas y suspende
+                angel.garcia14@murciaeduca.es.
               </p>
             </button>
 
             <button
               onclick="blueActionMaintenance()"
-              class="p-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-left transition group"
+              class="p-3.5 rounded-xl bg-black hover:bg-zinc-900 border border-zinc-800 text-left transition group"
             >
               <div
                 class="text-sm font-bold text-blue-400 group-hover:text-blue-300"
               >
                 🛠️ Activar Modo Mantenimiento
               </div>
-              <p class="text-[11px] text-slate-400 mt-1">
+              <p class="text-[11px] text-zinc-400 mt-1">
                 Aísla la portada pública mostrando aviso HTTP 503.
               </p>
             </button>
 
             <button
               onclick="blueActionRestoreBackup()"
-              class="p-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-left transition group"
+              class="p-3.5 rounded-xl bg-black hover:bg-zinc-900 border border-zinc-800 text-left transition group"
             >
               <div
                 class="text-sm font-bold text-emerald-400 group-hover:text-emerald-300"
               >
                 ♻️ Purgar Caché / Restaurar Copia
               </div>
-              <p class="text-[11px] text-slate-400 mt-1">
+              <p class="text-[11px] text-zinc-400 mt-1">
                 Restablece el index.html limpio desde backup y limpia CDN.
               </p>
             </button>
 
             <button
               onclick="blueActionHardening()"
-              class="p-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-left transition group"
+              class="p-3.5 rounded-xl bg-black hover:bg-zinc-900 border border-zinc-800 text-left transition group"
             >
               <div
                 class="text-sm font-bold text-purple-400 group-hover:text-purple-300"
               >
                 🛡️ Reglas WAF y Erradicación
               </div>
-              <p class="text-[11px] text-slate-400 mt-1">
+              <p class="text-[11px] text-zinc-400 mt-1">
                 Bloquea CMS externo, fuerza MFA y elimina persistencia.
               </p>
             </button>
@@ -924,7 +923,7 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
 
         <!-- CONSOLA DE LOGS EN TIEMPO REAL -->
         <div
-          class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl"
+          class="bg-[#09090b] border border-zinc-800 rounded-2xl overflow-hidden shadow-xl"
         >
           <!-- Barra de filtros -->
           <div
@@ -994,12 +993,12 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
     <!-- ===================================================================== -->
     <section
       id="view-gm"
-      class="view-section hidden flex-grow bg-slate-900 text-slate-100 py-8 px-4 sm:px-6 lg:px-8"
+      class="view-section hidden flex-grow bg-black text-zinc-100 py-8 px-4 sm:px-6 lg:px-8"
     >
       <div class="max-w-6xl mx-auto space-y-6">
         <!-- Cabecera Game Master -->
         <div
-          class="bg-slate-800/80 border border-amber-500/30 rounded-2xl p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-6"
+          class="bg-[#09090b] border border-amber-500/30 rounded-2xl p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-6"
         >
           <div>
             <span
@@ -1010,13 +1009,15 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
             <h1 class="text-2xl font-bold text-white">
               Control de Guion: "Operación Espejo Roto"
             </h1>
-            <p class="text-xs text-slate-400 mt-1">
+            <p class="text-xs text-zinc-400 mt-1">
               Credenciales de prueba CMS Staging:
-              <code class="text-amber-300 bg-slate-950 px-1.5 py-0.5 rounded"
-                >m.garcia@novacorp.local</code
+              <code
+                class="text-amber-300 bg-black px-1.5 py-0.5 rounded border border-zinc-800"
+                >angel.garcia14@murciaeduca.es</code
               >
               /
-              <code class="text-amber-300 bg-slate-950 px-1.5 py-0.5 rounded"
+              <code
+                class="text-amber-300 bg-black px-1.5 py-0.5 rounded border border-zinc-800"
                 >Nova2026!</code
               >
             </p>
@@ -1024,7 +1025,7 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
 
           <!-- Temporizador de Turno (20 minutos) -->
           <div
-            class="bg-slate-950 border border-slate-700 rounded-2xl p-4 flex items-center gap-4"
+            class="bg-black border border-zinc-800 rounded-2xl p-4 flex items-center gap-4"
           >
             <div>
               <div
@@ -1066,7 +1067,7 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
 
         <!-- Controles de Progresión de Turnos -->
         <div
-          class="bg-slate-800 border border-slate-700 rounded-2xl p-6 space-y-5"
+          class="bg-[#09090b] border border-zinc-800 rounded-2xl p-6 space-y-5"
         >
           <div
             class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700 pb-4"
@@ -1204,15 +1205,14 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
         </div>
         <p class="text-xs text-slate-400 mb-4">
           Introduce el PIN de instructor para abrir el panel de control de
-          turnos y guion (PIN por defecto:
-          <code class="text-amber-400">1234</code>).
+          turnos y guion.
         </p>
         <form onsubmit="verifyGmPin(event)" class="space-y-4">
           <input
             type="password"
             id="gm-pin-input"
             maxlength="8"
-            placeholder="PIN (1234)"
+            placeholder="••••"
             required
             class="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-center font-mono-code text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-amber-500"
           />
@@ -1264,7 +1264,7 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
 
     <!-- PIE DE PÁGINA DISCRETO -->
     <footer
-      class="bg-white border-t border-slate-200 py-4 px-4 text-xs text-slate-400"
+      class="bg-[#050505] border-t border-zinc-800 py-4 px-4 text-xs text-zinc-500"
     >
       <div
         class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2"
@@ -1276,9 +1276,9 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
         <div class="flex items-center gap-4">
           <span
             >Entorno:
-            <strong class="text-slate-600">Simulación Estática</strong></span
+            <strong class="text-zinc-300">Simulación Estática</strong></span
           >
-          <button onclick="openGmAuth()" class="hover:text-slate-700 underline">
+          <button onclick="openGmAuth()" class="hover:text-zinc-300 underline">
             Control Instructor
           </button>
         </div>
@@ -1291,7 +1291,7 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
     <script>
       // Clave de almacenamiento en localStorage para persistencia entre recargas
       const STORAGE_KEY = "novacorp_wargame_state_v1";
-      const GM_PIN = "1234";
+      const GM_PIN = "7777";
 
       // Guion completo de los 10 turnos + Turno 0 inicial
       const TURNS_SCRIPT = [
@@ -1301,7 +1301,7 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
           shortTitle: "Turno 0: Briefing y Reconocimiento OSINT",
           redTitle: "Reconocimiento Pasivo (OSINT)",
           redText:
-            "Examinad el portal público de NovaCorp (noticias y directorio). Identificad nombres, correos electrónicos y contexto tecnológico (migración de correo y CMS Staging) para preparar vuestro pretexto.",
+            "Examinad el portal público de NovaCorp (noticias y directorio). Identificad nombres como Angel Garcia, correos (angel.garcia14@murciaeduca.es) y contexto tecnológico (migración de correo y CMS Staging) para preparar vuestro pretexto.",
           blueTitle: "Postura Inicial de Monitorización",
           blueText:
             "Revisad la consola SIEM y familiarizaos con los controles de respuesta rápida. De momento el tráfico es nominal y todos los servicios operan con normalidad.",
@@ -1315,7 +1315,7 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
           shortTitle: "Turno 1: Preparación del Señuelo y Registro de Dominio",
           redTitle: "Diseño de Infraestructura de Phishing",
           redText:
-            "Vuestro objetivo es el área de Comunicación/Editorial. Definid el dominio lookalike (ej. novac0rp-mail.local), el asunto del correo aprovechando la migración y el perfil objetivo.",
+            "Vuestro objetivo es el área de Comunicación/Editorial (Angel Garcia). Definid el dominio lookalike (ej. murciaeduca-portal.local), el asunto del correo aprovechando la migración y el perfil objetivo.",
           blueTitle: "Inteligencia de Amenazas y Perímetro",
           blueText:
             "Los sensores de inteligencia de dominio alertan del registro reciente de un dominio similar al corporativo. Evaluad si reforzar reglas en la pasarela de correo.",
@@ -1325,12 +1325,62 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
             {
               level: "INFO",
               source: "THREAT-INTEL",
-              msg: "Detectado registro reciente de dominio similar: novac0rp-portal.local (antigüedad < 2h).",
+              msg: "Detectado registro reciente de dominio similar: murciaeduca-portal.local (antigüedad < 2h).",
             },
             {
               level: "INFO",
               source: "MAIL-GW",
               msg: "Flujo de correo entrante dentro de parámetros habituales (142 msg/min).",
+            },
+          ],
+        },
+        {
+          turn: 2,
+          timeLabel: "Min 00:50",
+          shortTitle: "Turno 2: Lanzamiento de Campaña Phishing",
+          redTitle: "Envío Dirigido y Captura de Credenciales",
+          redText:
+            "Lanzáis el phishing hacia Marketing y Comunicación. Dos empleados hacen clic; Angel Garcia (angel.garcia14@murciaeduca.es) introduce sus credenciales en vuestro portal clonado antes de ser redirigido.",
+          blueTitle: "Primeros Reportes de Usuarios",
+          blueText:
+            'El filtro antispam bloquea 4 correos sospechosos, pero Angel Garcia llama a soporte diciendo que "el nuevo portal de correo le pidió la clave dos veces". ¿Qué hacéis?',
+          instructorNote:
+            "Si el Blue Team aún no bloquea la cuenta, el Red Team podrá usar esas credenciales en el Turno 3. Si la bloquean ya, el Red Team tendrá que usar una cuenta secundaria de respaldo.",
+          logs: [
+            {
+              level: "WARN",
+              source: "MAIL-GW",
+              msg: 'Bloqueados 4 correos externos con asunto "Urgente: Validación Migración Correo NovaCorp".',
+            },
+            {
+              level: "ALERT",
+              source: "HELPDESK",
+              msg: "Ticket #4812: Usuario angel.garcia14@murciaeduca.es (Angel Garcia) reporta doble solicitud de contraseña en enlace de correo.",
+            },
+          ],
+        },
+        {
+          turn: 3,
+          timeLabel: "Min 01:10",
+          shortTitle: "Turno 3: Acceso Inicial y Pivote a CMS Staging",
+          redTitle: "Acceso al Buzón y Hallazgo de Credenciales CMS",
+          redText:
+            "Accedéis al correo de Angel Garcia y encontráis un hilo antiguo con la URL y credenciales de CMS Staging (angel.garcia14@murciaeduca.es / Nova2026!). Preparad el acceso al panel CMS.",
+          blueTitle: "Actividad de Autenticación Anómala",
+          blueText:
+            "Se detecta un inicio de sesión exitoso en webmail para angel.garcia14@murciaeduca.es desde una IP residencial externa fuera del rango habitual, seguido de búsquedas internas en el buzón.",
+          instructorNote:
+            'En este turno el Red Team ya tiene la clave para probar en la pestaña "CMS Staging". Observa si el Blue Team bloquea la cuenta a tiempo.',
+          logs: [
+            {
+              level: "ALERT",
+              source: "IAM-AUTH",
+              msg: "Login exitoso para angel.garcia14@murciaeduca.es desde IP externa anómala (185.220.101.44).",
+            },
+            {
+              level: "WARN",
+              source: "WEBMAIL-AUDIT",
+              msg: 'Búsqueda en buzón de Angel Garcia con términos: "staging", "password", "cms-login".',
             },
           ],
         },
@@ -1701,7 +1751,10 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
           return;
         }
 
-        if (appState.accountBlocked && email === "m.garcia@novacorp.local") {
+        if (
+          appState.accountBlocked &&
+          email === "angel.garcia14@murciaeduca.es"
+        ) {
           errorEl.textContent =
             "Cuenta suspendida por el equipo de Seguridad (SOC). Contacta con soporte.";
           errorEl.classList.remove("hidden");
@@ -1714,14 +1767,14 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
         }
 
         // Validar credenciales del escenario
-        if (email === "m.garcia@novacorp.local" && pass === "Nova2026!") {
+        if (email === "angel.garcia14@murciaeduca.es" && pass === "Nova2026!") {
           errorEl.classList.add("hidden");
           appState.cmsLoggedIn = true;
           appState.cmsUser = email;
           addLog(
             "ALERT",
             "CMS-STAGING",
-            `Inicio de sesión exitoso en panel CMS Staging por ${email}.`,
+            `Inicio de sesión exitoso en panel CMS Staging por ${email} (Angel Garcia).`,
           );
           showToast(
             "Acceso concedido a CMS Staging",
@@ -1744,6 +1797,87 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
       function handleCmsLogout() {
         appState.cmsLoggedIn = false;
         appState.cmsUser = "";
+        saveState();
+      }
+
+      function applyCmsChanges() {
+        if (
+          appState.wafHardened ||
+          (appState.accountBlocked &&
+            appState.cmsUser === "angel.garcia14@murciaeduca.es")
+        ) {
+          appState.cmsLoggedIn = false;
+          saveState();
+          showToast(
+            "Sesión revocada",
+            "El Blue Team ha bloqueado tu acceso mientras editabas.",
+            "danger",
+          );
+          return;
+        }
+
+        const mode = document.getElementById("cms-publish-mode").value;
+        const title =
+          document.getElementById("cms-input-title").value.trim() ||
+          "SITIO COMPROMETIDO";
+        const message = document
+          .getElementById("cms-input-message")
+          .value.trim();
+        const persistence = document.getElementById(
+          "cms-persistence-check",
+        ).checked;
+
+        appState.persistenceActive = persistence;
+
+        if (mode === "defaced") {
+          appState.siteMode = "defaced";
+          appState.defacedTitle = title;
+          appState.defacedMessage = message;
+          appState.defacedTimestamp = getCurrentTimeStr();
+          addLog(
+            "CRITICAL",
+            "WEB-ORIGIN",
+            `¡DEFACEMENT EJECUTADO! Archivo index.html sobrescrito por ${appState.cmsUser} (Angel Garcia). Persistencia: ${persistence ? "SÍ" : "NO"}.`,
+          );
+          showToast(
+            "¡Defacement Desplegado!",
+            "La portada pública de NovaCorp ha sido alterada.",
+            "danger",
+          );
+        } else {
+          appState.siteMode = "normal";
+          addLog(
+            "INFO",
+            "CMS-STAGING",
+            `Publicación editorial estándar desplegada por ${appState.cmsUser}.`,
+          );
+          showToast(
+            "Cambios publicados",
+            "La portada pública se ha actualizado.",
+            "success",
+          );
+        }
+        saveState();
+      }
+
+      // =====================================================================
+      // ACCIONES DEFENSIVAS DEL SOC (BLUE TEAM)
+      // =====================================================================
+      function blueActionBlockAccount() {
+        appState.accountBlocked = true;
+        if (appState.cmsUser === "angel.garcia14@murciaeduca.es") {
+          appState.cmsLoggedIn = false;
+        }
+        addLog(
+          "INFO",
+          "SOC-ACTION",
+          "Blue Team bloqueó la cuenta angel.garcia14@murciaeduca.es (Angel Garcia) y revocó todos sus tokens activos.",
+        );
+        showToast(
+          "Cuenta Bloqueada",
+          "angel.garcia14@murciaeduca.es suspendida y sesiones cerradas.",
+          "success",
+        );
         saveState();
       }
 
@@ -2190,8 +2324,8 @@ Vuestra seguridad perimetral es una ilusión. Hemos tomado el control del gestor
         // 4. Actualizar Badges de Consola SOC y Logs
         document.getElementById("soc-badge-account").innerHTML =
           appState.accountBlocked
-            ? 'Cuenta m.garcia: <strong class="text-red-400">BLOQUEADA</strong>'
-            : 'Cuenta m.garcia: <strong class="text-emerald-400">ACTIVA</strong>';
+            ? 'Cuenta angel.garcia14@murciaeduca.es: <strong class="text-red-400">BLOQUEADA</strong>'
+            : 'Cuenta angel.garcia14@murciaeduca.es: <strong class="text-emerald-400">ACTIVA</strong>';
 
         document.getElementById("soc-badge-waf").innerHTML =
           appState.wafHardened
